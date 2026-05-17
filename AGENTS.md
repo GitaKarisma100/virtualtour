@@ -40,3 +40,6 @@
 - `.env` is gitignored; copy from `.env.example` if missing
 - Admin views use CDN Tailwind — changes there won't go through Vite build
 - No CI workflows, pre-commit hooks, or custom linter rules beyond Laravel Pint defaults
+
+## Session
+- opencode -s ses_1d2fad1f5ffekezBl3xxZQVhX5
