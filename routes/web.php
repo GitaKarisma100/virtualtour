@@ -1,10 +1,10 @@
 <?php
 
+use App\Http\Controllers\TourController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [TourController::class, 'index'])->name('tour.index');
+Route::get('/tour/{building}', [TourController::class, 'show'])->name('tour.show');
 
 Route::middleware([
     'auth:sanctum',
