@@ -19,12 +19,12 @@
 | Fresh setup | `composer run setup` |
 
 ## Architecture
-- **Entry point**: `bootstrap/app.php` — registers `routes/web.php`, `routes/api.php`, `routes/console.php`
+- **Entry point**: `bootstrap/app.php` — registers routes via `routes/web.php`, `routes/api.php`, `routes/console.php`
 - **Health check**: `/up`
 - **Providers**: `AppServiceProvider`, `FortifyServiceProvider`, `JetstreamServiceProvider`
 - **Auth**: Sanctum guard, Jetstream Livewire components, 2FA + passkeys enabled
-- **Jetstream features**: only `accountDeletion` is active (API, teams, profile photos, terms/privacy are commented out in `config/jetstream.php`)
-- **Admin UI**: `resources/views/admin/` contains static HTML mockups using **CDN Tailwind** (not wired to routes or Vite). These are design templates, not functional pages.
+- **Jetstream features**: only `accountDeletion` is active (API, teams, profile photos, terms/privacy commented out in `config/jetstream.php`)
+- **Admin UI**: `resources/views/admin/` contains static HTML mockups using **CDN Tailwind** (not wired to routes or Vite). Design templates only.
 
 ## Database
 - Migrations exist for: users (with 2FA columns), cache, jobs, passkeys, personal_access_tokens

@@ -1,0 +1,46 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Building;
+
+class TourController extends Controller
+{
+    public function index()
+    {
+        $buildings = Building::where('is_active', true)
+            ->orderBy('sort_order')
+            ->get();
+
+        return view('tour.index', compact('buildings'));
+    }
+
+    public function show(Building $building)
+    {
+        $building->load(['locations' => function ($query) {
+            $query->where('is_active', true)->orderBy('sort_order');
+        }, 'locations.hotspots', 'locations.hotspots.targetLocation']);
+
+        $locationsJson = json_encode($building->locations->map(function ($location) {
+            return [
+                'id' => $location->id,
+                'name' => $location->name,
+                'description' => $location->description,
+                'image' => asset('storage/'.$location->image_path),
+                'hfov' => (int) ($location->hfov ?? 100),
+                'yaw' => (float) ($location->yaw ?? 0),
+                'pitch' => (float) ($location->pitch ?? 0),
+                'hotspots' => $location->hotspots->map(function ($hotspot) {
+                    return [
+                        'yaw' => (float) $hotspot->yaw,
+                        'pitch' => (float) $hotspot->pitch,
+                        'targetId' => $hotspot->target_location_id,
+                        'label' => $hotspot->label,
+                    ];
+                })->toArray(),
+            ];
+        })->toArray());
+
+        return view('tour.show', compact('building', 'locationsJson'));
+    }
+}
