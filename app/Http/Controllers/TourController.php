@@ -32,10 +32,15 @@ class TourController extends Controller
                 'pitch' => (float) ($location->pitch ?? 0),
                 'hotspots' => $location->hotspots->map(function ($hotspot) {
                     return [
+                        'id' => $hotspot->id,
                         'yaw' => (float) $hotspot->yaw,
                         'pitch' => (float) $hotspot->pitch,
                         'targetId' => $hotspot->target_location_id,
                         'label' => $hotspot->label,
+                        'description' => $hotspot->description,
+                        'type' => $hotspot->type,
+                        'icon' => $hotspot->icon,
+                        'url' => $hotspot->url,
                     ];
                 })->toArray(),
             ];

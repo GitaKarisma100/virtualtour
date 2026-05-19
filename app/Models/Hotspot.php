@@ -13,6 +13,7 @@ class Hotspot extends Model
         'yaw',
         'pitch',
         'label',
+        'description',
         'type',
         'icon',
         'url',

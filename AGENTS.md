@@ -1,42 +1,49 @@
 # AGENTS.md — virtualtour
 
 ## Stack
-- **Laravel 12** (PHP 8.2+) + **Jetstream** (Livewire stack) + **Sanctum** + **Fortify** (2FA, passkeys)
-- **Vite 7** for assets, **Tailwind CSS 3.4** with custom design tokens
-- **MySQL** (Laragon default: `virtualTour` db, root, no password)
-- **PHPUnit 11** (not Pest, despite `pestphp/pest-plugin` being allowed in composer.json)
+- **Laravel 12** (PHP 8.2+) + **Jetstream** (Livewire stack, Sanctum guard) + **Fortify** (2FA, passkeys)
+- **Vite 7** for Jetstream assets (`resources/css/app.css`, `resources/js/app.js`)
+- **Tailwind CSS 3.4** via PostCSS + `tailwind.config.js` (v3 style); `@tailwindcss/vite` (v4) is in devDeps but **unused**
+- **PHPUnit 11** (not Pest; `pestphp/pest-plugin` is allowed but unused)
+- **Session/Cache/Queue default to `database` driver** in `.env` — requires `php artisan migrate`
+- DB default in `.env.example`: SQLite. Laragon devs switch to MySQL (`virtualTour`, root, no password)
 
 ## Developer Commands
 | Task | Command |
 |---|---|
 | Full dev (server + queue + logs + vite) | `composer run dev` |
 | Run all tests | `composer run test` or `php artisan test` |
-| Run a single test file | `php artisan test tests/Feature/ExampleTest.php` |
-| Run a single test method | `php artisan test --filter=testName` |
-| Lint / format PHP | `vendor/bin/pint` |
+| Single test file | `php artisan test tests/Feature/ExampleTest.php` |
+| Single test method | `php artisan test --filter=testName` |
+| Lint PHP | `vendor/bin/pint` |
 | Vite dev server only | `npm run dev` |
 | Vite production build | `npm run build` |
 | Fresh setup | `composer run setup` |
+| Create storage symlink | `php artisan storage:link` |
+
+## Two separate frontend stacks
+1. **Vite-processed** — Jetstream auth/profile/API-token pages (`resources/views/{auth,profile,api}/`, welcome, dashboard). Tailwind purged by PostCSS. Run `npm run dev` or `npm run build`.
+2. **CDN-only** — Admin CRUD (`resources/views/admin/`) and public tour pages (`resources/views/tour/`). Use CDN Tailwind, Alpine.js, Material Symbols, Photo Sphere Viewer. Changes do NOT go through Vite; refresh the browser to see them.
 
 ## Architecture
-- **Entry point**: `bootstrap/app.php` — registers routes via `routes/web.php`, `routes/api.php`, `routes/console.php`
-- **Health check**: `/up`
-- **Providers**: `AppServiceProvider`, `FortifyServiceProvider`, `JetstreamServiceProvider`
-- **Auth**: Sanctum guard, Jetstream Livewire components, 2FA + passkeys enabled
-- **Jetstream features**: only `accountDeletion` is active (API, teams, profile photos, terms/privacy commented out in `config/jetstream.php`)
-- **Admin UI**: `resources/views/admin/` contains static HTML mockups using **CDN Tailwind** (not wired to routes or Vite). Design templates only.
+- **Models** (custom): `Building` → hasMany `Location` → hasMany `Hotspot`. `Hotspot.target_location_id` self-references `locations` for navigation links.
+- **Public routes** (`routes/web.php`): `GET /` (building index), `GET /tour/{building}` (360° viewer via Photo Sphere Viewer CDN + three.js importmap).
+- **Admin CRUD routes** (`routes/web.php`, under `auth:sanctum` + `verified`): `admin/`, `admin/virtual-tour/buildings`, `admin/virtual-tour/buildings/{building}/locations`, `admin/virtual-tour/buildings/{building}/locations/{location}/hotspots`.
+- **Images** stored on `public` disk (`storage/app/public/`). The `TourController` prefixes with `asset('storage/...')`. Requires `php artisan storage:link`.
+- **Fortify** features: registration, password reset, profile info/password update, 2FA, passkeys. Email verification off.
+- **Jetstream features**: only `accountDeletion`. API tokens, teams, profile photos, terms/privacy disabled.
 
 ## Database
-- Migrations exist for: users (with 2FA columns), cache, jobs, passkeys, personal_access_tokens
-- Default DB in `.env`: MySQL `virtualTour` on `127.0.0.1:3306` (Laragon convention)
+- 9 migrations: users (with 2FA columns), cache, jobs, passkeys, personal_access_tokens, + 3 custom (buildings, locations, hotspots)
 - Tests use SQLite `:memory:` (configured in `phpunit.xml`)
 
 ## Testing
-- PHPUnit config at `phpunit.xml` — Unit (`tests/Unit`) and Feature (`tests/Feature`) suites
-- Tests ship with Jetstream scaffolding (auth, profile, API tokens, 2FA)
-- No custom application tests written yet
+- PHPUnit suites: `tests/Unit` (standalone, no Laravel) and `tests/Feature` (with app boot)
+- All existing tests are Jetstream-scaffolded (auth, profile, 2FA, API tokens). No tests exist for custom models/controllers yet.
+- Feature tests use `RefreshDatabase` trait. Example: `AuthenticationTest.php`.
 
 ## Gotchas
 - `.env` is gitignored; copy from `.env.example` if missing
-- Admin views use CDN Tailwind — changes there won't go through Vite build
-- No CI workflows, pre-commit hooks, or custom linter rules beyond Laravel Pint defaults
+- Admin + tour views use CDN assets — no Vite build needed for changes
+- `@tailwindcss/vite ^4.0.0` in devDeps is unused; do not import it (Tailwind v3 + PostCSS pipeline is active)
+- No CI, no pre-commit hooks, no custom Pint rules

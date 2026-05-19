@@ -39,6 +39,12 @@
                         class="w-full px-md py-sm bg-surface-container-low border border-outline-variant focus:border-primary focus:ring-0 rounded-lg text-body-md transition-all outline-none" />
                 </div>
 
+                <div>
+                    <label class="text-label-md font-label-md text-primary mb-base block">Description</label>
+                    <textarea name="description" rows="3"
+                        class="w-full px-md py-sm bg-surface-container-low border border-outline-variant focus:border-primary focus:ring-0 rounded-lg text-body-md transition-all outline-none">{{ old('description', $hotspot->description ?? '') }}</textarea>
+                </div>
+
                 <div class="grid grid-cols-2 gap-md">
                     <div>
                         <label class="text-label-md font-label-md text-primary mb-base block">Yaw (°) *</label>
