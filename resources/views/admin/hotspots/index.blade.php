@@ -39,6 +39,9 @@
                         <tr class="hover:bg-surface-container-low transition-colors group">
                             <td class="px-lg py-md">
                                 <p class="text-body-md font-bold text-primary">{{ $hotspot->label ?? '—' }}</p>
+                                @if($hotspot->description)
+                                    <p class="text-label-md text-secondary mt-xs max-w-xs truncate">{{ $hotspot->description }}</p>
+                                @endif
                             </td>
                             <td class="px-lg py-md">
                                 <span class="px-sm py-base rounded text-label-md font-bold

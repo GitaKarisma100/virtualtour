@@ -32,6 +32,7 @@ class HotspotController extends Controller
             'yaw' => 'required|numeric|min:-180|max:180',
             'pitch' => 'required|numeric|min:-90|max:90',
             'label' => 'nullable|string|max:255',
+            'description' => 'nullable|string',
             'type' => 'required|in:navigation,info,external_link',
             'icon' => 'nullable|string|max:50',
             'url' => 'nullable|url|max:255',
@@ -43,6 +44,7 @@ class HotspotController extends Controller
         $hotspot->yaw = $validated['yaw'];
         $hotspot->pitch = $validated['pitch'];
         $hotspot->label = $validated['label'] ?? null;
+        $hotspot->description = $validated['description'] ?? null;
         $hotspot->type = $validated['type'];
         $hotspot->icon = $validated['icon'] ?? null;
         $hotspot->url = $validated['type'] === 'external_link' ? $validated['url'] : null;
@@ -67,6 +69,7 @@ class HotspotController extends Controller
             'yaw' => 'required|numeric|min:-180|max:180',
             'pitch' => 'required|numeric|min:-90|max:90',
             'label' => 'nullable|string|max:255',
+            'description' => 'nullable|string',
             'type' => 'required|in:navigation,info,external_link',
             'icon' => 'nullable|string|max:50',
             'url' => 'nullable|url|max:255',
@@ -76,6 +79,7 @@ class HotspotController extends Controller
         $hotspot->yaw = $validated['yaw'];
         $hotspot->pitch = $validated['pitch'];
         $hotspot->label = $validated['label'] ?? null;
+        $hotspot->description = $validated['description'] ?? null;
         $hotspot->type = $validated['type'];
         $hotspot->icon = $validated['icon'] ?? null;
         $hotspot->url = $validated['type'] === 'external_link' ? $validated['url'] : null;

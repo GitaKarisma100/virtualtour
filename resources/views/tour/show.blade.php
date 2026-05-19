@@ -56,6 +56,41 @@
     cursor: pointer;
   }
   #back-btn:hover { background: rgba(0,0,0,0.8); }
+
+  #sidebar {
+    position: fixed; top: 0; right: 0; z-index: 9998;
+    width: 420px; max-width: 100vw; height: 100vh;
+    background: rgba(16,16,18,0.94); backdrop-filter: blur(20px);
+    border-left: 1px solid rgba(255,255,255,0.08);
+    transform: translateX(100%); transition: transform .35s cubic-bezier(.22,1,.36,1);
+    display: flex; flex-direction: column;
+  }
+  #sidebar.open { transform: translateX(0); }
+  #sidebar-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 24px 28px 0; flex-shrink: 0;
+  }
+  #sidebar-header h2 {
+    font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+    color: rgba(255,255,255,0.35); font-weight: 500; margin: 0;
+  }
+  #sidebar-close {
+    background: none; border: none; color: rgba(255,255,255,0.4);
+    font-size: 24px; cursor: pointer; padding: 4px; line-height: 1;
+  }
+  #sidebar-close:hover { color: #fff; }
+  #sidebar-body {
+    padding: 20px 28px 28px; overflow-y: auto; flex: 1;
+  }
+  #sidebar-body h3 {
+    font-size: 22px; font-weight: 600; color: #fff; margin: 0 0 6px;
+  }
+  #sidebar-body hr {
+    border: none; border-top: 1px solid rgba(255,255,255,0.06); margin: 16px 0;
+  }
+  #sidebar-body p {
+    font-size: 15px; color: rgba(255,255,255,0.55); line-height: 1.7; margin: 0;
+  }
 </style>
 </head>
 <body>
@@ -72,7 +107,19 @@
 <a href="{{ route('tour.index') }}" id="back-btn">← Kembali</a>
 
 <div id="nav"></div>
-<div id="hint">Klik panah di lantai untuk berpindah</div>
+<div id="hint">Klik panah untuk navigasi • Klik marker info untuk detail</div>
+
+<div id="sidebar">
+  <div id="sidebar-header">
+    <h2>Informasi</h2>
+    <button id="sidebar-close" onclick="hideInfoPopup()">✕</button>
+  </div>
+  <div id="sidebar-body">
+    <h3 id="sidebar-title"></h3>
+    <hr>
+    <p id="sidebar-desc"></p>
+  </div>
+</div>
 
 <script type="importmap">
 {
@@ -80,6 +127,18 @@
     "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
     "@photo-sphere-viewer/core": "https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/core@5.4.4/index.module.js"
   }
+}
+</script>
+
+<script>
+function hideInfoPopup() {
+  document.getElementById('sidebar').classList.remove('open');
+}
+
+function showInfoPopup(label, desc) {
+  document.getElementById('sidebar-title').textContent = label;
+  document.getElementById('sidebar-desc').textContent = desc || '';
+  document.getElementById('sidebar').classList.add('open');
 }
 </script>
 
@@ -91,66 +150,112 @@ const LOCATIONS = {!! $locationsJson !!};
 
 let viewer      = null;
 let currentIdx  = 0;
-let arrowMeshes = [];
+let markerMeshes = [];
 const SPHERE_R  = 1;
 
-function makeArrowTexture() {
+function makeCircleCanvas(bgColor) {
   const S = 512;
   const c = document.createElement('canvas');
   c.width = c.height = S;
   const g = c.getContext('2d');
   const cx = S / 2, cy = S / 2;
+  const r = S * 0.38;
 
-  g.save();
-  g.translate(cx, cy + S * 0.18);
-  g.scale(1, 0.28);
-  g.beginPath();
-  g.arc(0, 0, S * 0.30, 0, Math.PI * 2);
-  const grad = g.createRadialGradient(0, 0, 0, 0, 0, S * 0.30);
-  grad.addColorStop(0,   'rgba(0, 0, 0, 0.45)');
-  grad.addColorStop(0.6, 'rgba(0, 0, 0, 0.20)');
+  const grad = g.createRadialGradient(cx, cy + S * 0.18, 0, cx, cy + S * 0.18, S * 0.40);
+  grad.addColorStop(0,   'rgba(0, 0, 0, 0.50)');
+  grad.addColorStop(0.6, 'rgba(0, 0, 0, 0.22)');
   grad.addColorStop(1,   'rgba(0, 0, 0, 0)');
   g.fillStyle = grad;
-  g.fill();
-  g.restore();
-
-  const circleR = S * 0.22;
   g.beginPath();
-  g.arc(cx, cy - S * 0.04, circleR, 0, Math.PI * 2);
-  g.fillStyle = 'rgba(255, 255, 255, 0.88)';
+  g.ellipse(cx, cy + S * 0.18, S * 0.40, S * 0.12, 0, 0, Math.PI * 2);
   g.fill();
 
-  const arrowSize = circleR * 0.65;
-  const tipY  = cy - S * 0.04 + arrowSize * 0.70;
-  const baseY = cy - S * 0.04 - arrowSize * 0.45;
-  const midY  = cy - S * 0.04;
+  g.beginPath();
+  g.arc(cx, cy, r, 0, Math.PI * 2);
+  g.fillStyle = bgColor;
+  g.fill();
+
+  return { canvas: c, cx, cy, r };
+}
+
+function makeArrowTexture() {
+  const { canvas: c, cx, cy, r } = makeCircleCanvas('rgba(255,255,255,0.9)');
+  const g = c.getContext('2d');
+  const s = r * 0.55;
+  const tipY  = cy - s * 0.30;
+  const baseY = cy + s * 0.55;
 
   g.beginPath();
-  g.moveTo(cx - arrowSize * 0.75, baseY);
-  g.lineTo(cx,                    tipY);
-  g.lineTo(cx + arrowSize * 0.75, baseY);
-  g.lineTo(cx + arrowSize * 0.30, midY);
-  g.lineTo(cx,                    midY - arrowSize * 0.28);
-  g.lineTo(cx - arrowSize * 0.30, midY);
+  g.moveTo(cx - s * 0.65, baseY);
+  g.lineTo(cx,            tipY);
+  g.lineTo(cx + s * 0.65, baseY);
+  g.lineTo(cx + s * 0.25, cy + s * 0.15);
+  g.lineTo(cx,            cy);
+  g.lineTo(cx - s * 0.25, cy + s * 0.15);
   g.closePath();
-  g.fillStyle = 'rgba(55, 55, 55, 0.90)';
+  g.fillStyle = 'rgba(40, 40, 40, 0.9)';
+  g.fill();
+  g.beginPath();
+  g.arc(cx, cy - s * 0.08, s * 0.16, 0, Math.PI * 2);
+  g.fillStyle = 'rgba(40, 40, 40, 0.9)';
   g.fill();
 
   return new THREE.CanvasTexture(c);
 }
 
-function clearArrows() {
+function makeInfoTexture(label) {
+  const { canvas: c, cx, cy, r } = makeCircleCanvas('rgba(79, 195, 247, 0.9)');
+  const g = c.getContext('2d');
+  const text = (label || '').trim();
+  if (text) {
+    const maxWidth = r * 1.5;
+    let fontSize = r * 0.55;
+    g.font = `bold ${fontSize}px sans-serif`;
+    while (g.measureText(text).width > maxWidth && fontSize > 16) {
+      fontSize -= 2;
+      g.font = `bold ${fontSize}px sans-serif`;
+    }
+    g.fillStyle = '#fff';
+    g.textAlign = 'center';
+    g.textBaseline = 'middle';
+    g.fillText(text.length > 18 ? text.slice(0, 16) + '…' : text, cx, cy + 2);
+  }
+  return new THREE.CanvasTexture(c);
+}
+
+function makeLinkTexture() {
+  const { canvas: c, cx, cy, r } = makeCircleCanvas('rgba(162, 130, 255, 0.9)');
+  const g = c.getContext('2d');
+  const s = r * 0.45;
+  g.strokeStyle = '#fff';
+  g.lineWidth = r * 0.22;
+  g.lineCap = 'round';
+  g.beginPath();
+  g.moveTo(cx - s, cy + s * 0.3);
+  g.lineTo(cx - s * 0.45, cy + s * 0.3);
+  g.lineTo(cx - s * 0.45, cy - s * 0.3);
+  g.lineTo(cx + s, cy - s * 0.3);
+  g.stroke();
+  g.beginPath();
+  g.moveTo(cx + s, cy - s * 0.3);
+  g.lineTo(cx + s, cy + s * 0.3);
+  g.lineTo(cx + s * 0.45, cy + s * 0.3);
+  g.stroke();
+  return new THREE.CanvasTexture(c);
+}
+
+function clearMarkers() {
   const scene = viewer.renderer.scene;
-  arrowMeshes.forEach(m => {
+  markerMeshes.forEach(m => {
     scene.remove(m);
     m.geometry.dispose();
     if (m.material.map) m.material.map.dispose();
     m.material.dispose();
   });
-  arrowMeshes = [];
+  markerMeshes = [];
 }
 
-function addArrow(yawDeg, pitchDeg, targetIdx) {
+function addMarkerMesh(yawDeg, pitchDeg, texture, sizeMul, userData) {
   const scene = viewer.renderer.scene;
   const yaw   = THREE.MathUtils.degToRad(yawDeg);
   const pitch = THREE.MathUtils.degToRad(pitchDeg);
@@ -160,12 +265,12 @@ function addArrow(yawDeg, pitchDeg, targetIdx) {
   const y =  r * Math.sin(pitch);
   const z = -r * Math.cos(pitch) * Math.cos(yaw);
 
-  const size = r * 0.22;
+  const size = r * 0.22 * sizeMul;
 
   const mesh = new THREE.Mesh(
     new THREE.PlaneGeometry(size, size),
     new THREE.MeshBasicMaterial({
-      map:         makeArrowTexture(),
+      map:         texture,
       transparent: true,
       depthWrite:  false,
       depthTest:   false,
@@ -176,18 +281,22 @@ function addArrow(yawDeg, pitchDeg, targetIdx) {
 
   mesh.position.set(x, y, z);
   mesh.lookAt(0, 0, 0);
-  mesh.rotateX(Math.PI);
+  mesh.scale.z = -1;
   mesh.renderOrder = 999;
-  mesh.userData    = { targetIdx, phase: Math.random() * Math.PI * 2 };
+  mesh.userData    = { ...userData, phase: Math.random() * Math.PI * 2, position: new THREE.Vector3(x, y, z) };
 
   scene.add(mesh);
-  arrowMeshes.push(mesh);
+  markerMeshes.push(mesh);
+  return mesh;
 }
+
+const arrowTex = makeArrowTexture();
+const linkTex  = makeLinkTexture();
 
 function startAnim() {
   const loop = (t) => {
     requestAnimationFrame(loop);
-    arrowMeshes.forEach(m => {
+    markerMeshes.forEach(m => {
       m.scale.setScalar(1 + 0.05 * Math.sin(t / 800 + m.userData.phase));
     });
   };
@@ -211,18 +320,26 @@ function setupClick() {
   };
 
   canvas.addEventListener('click', (e) => {
-    if (!arrowMeshes.length) return;
+    if (!markerMeshes.length) return;
     toNDC(e);
     ray.setFromCamera(mouse, viewer.renderer.camera);
-    const hits = ray.intersectObjects(arrowMeshes, false);
-    if (hits.length) loadLocation(hits[0].object.userData.targetIdx);
+    const hits = ray.intersectObjects(markerMeshes, false);
+    if (!hits.length) return;
+    const data = hits[0].object.userData;
+    if (data.type === 'navigation') {
+      loadLocation(data.targetIdx);
+    } else if (data.type === 'info') {
+      showInfoPopup(data.label, data.description);
+    } else if (data.type === 'external_link' && data.url) {
+      window.open(data.url, '_blank');
+    }
   });
 
   canvas.addEventListener('mousemove', (e) => {
-    if (!arrowMeshes.length) return;
+    if (!markerMeshes.length) return;
     toNDC(e);
     ray.setFromCamera(mouse, viewer.renderer.camera);
-    canvas.style.cursor = ray.intersectObjects(arrowMeshes, false).length ? 'pointer' : '';
+    canvas.style.cursor = ray.intersectObjects(markerMeshes, false).length ? 'pointer' : '';
   });
 }
 
@@ -249,9 +366,17 @@ function loadLocation(idx) {
 
   viewer.setPanorama(loc.image).then(() => {
     viewer.rotate({ yaw: (loc.yaw || 0) + 'deg', pitch: (loc.pitch || 0) + 'deg' });
-    clearArrows();
+    clearMarkers();
     (loc.hotspots || []).forEach(h => {
-      addArrow(h.yaw, h.pitch ?? -30, LOCATIONS.findIndex(l => l.id === h.targetId));
+      if (h.type === 'navigation') {
+        const targetIdx = LOCATIONS.findIndex(l => l.id === h.targetId);
+        if (targetIdx === -1) return;
+        addMarkerMesh(h.yaw, h.pitch ?? -30, arrowTex, 1, { type: 'navigation', targetIdx });
+      } else if (h.type === 'info') {
+        addMarkerMesh(h.yaw, h.pitch ?? -15, makeInfoTexture(h.label), 1.1, { type: 'info', label: h.label, description: h.description });
+      } else if (h.type === 'external_link' && h.url) {
+        addMarkerMesh(h.yaw, h.pitch ?? -20, linkTex, 0.85, { type: 'external_link', url: h.url });
+      }
     });
   });
 }
