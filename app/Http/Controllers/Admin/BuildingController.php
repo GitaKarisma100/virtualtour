@@ -25,9 +25,9 @@ class BuildingController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'thumbnail' => 'nullable|image|max:2048',
+            'thumbnail' => 'nullable|image|max:10240',
             'sort_order' => 'nullable|integer|min:0',
-            'is_active' => 'nullable|boolean',
+            'is_active' => 'nullable|boolean', 
         ]);
 
         $building = new Building();
