@@ -99,7 +99,7 @@
 <div id="viewer"></div>
 
 <div id="hud">
-  <div class="label">Lokasi saat ini</div>
+  <!-- <div class="label">Lokasi saat ini</div> -->
   <div class="name" id="loc-name">—</div>
   <div class="desc" id="loc-desc"></div>
 </div>
@@ -204,22 +204,37 @@ function makeArrowTexture() {
 }
 
 function makeInfoTexture(label) {
-  const { canvas: c, cx, cy, r } = makeCircleCanvas('rgba(79, 195, 247, 0.9)');
-  const g = c.getContext('2d');
   const text = (label || '').trim();
-  if (text) {
-    const maxWidth = r * 1.5;
-    let fontSize = r * 0.55;
-    g.font = `bold ${fontSize}px sans-serif`;
-    while (g.measureText(text).width > maxWidth && fontSize > 16) {
-      fontSize -= 2;
-      g.font = `bold ${fontSize}px sans-serif`;
-    }
-    g.fillStyle = '#fff';
-    g.textAlign = 'center';
-    g.textBaseline = 'middle';
-    g.fillText(text.length > 18 ? text.slice(0, 16) + '…' : text, cx, cy + 2);
-  }
+  const c = document.createElement('canvas');
+  const g = c.getContext('2d');
+  
+  const fontSize = 18; 
+  g.font = `bold ${fontSize}px sans-serif`;
+  
+  // Kalkulasi lebar oval mengikuti panjang teks
+  const textWidth = g.measureText(text).width;
+  const rectWidth = textWidth + 30;  // Panjang oval otomatis
+  const rectHeight = fontSize + 15;  // Tinggi oval
+  
+  c.width = rectWidth + 20;
+  c.height = rectHeight + 30;
+  
+  const cx = c.width / 2;
+  const cy = c.height / 2 - 5;
+
+  // Gambar Background Oval (Biru Tua Poliwangi Semi-Transparan)
+  g.beginPath();
+  g.roundRect(cx - rectWidth / 2, cy - rectHeight / 2, rectWidth, rectHeight, rectHeight / 2);
+  g.fillStyle = 'rgba(0, 51, 102, 0.75)'; // Ganti angka ini jika ingin lebih/kurang transparan
+  g.fill();
+
+  // Gambar Teks
+  g.fillStyle = '#ffffff';
+  g.textAlign = 'center';
+  g.textBaseline = 'middle';
+  g.font = `bold ${fontSize}px system-ui`;
+  g.fillText(text, cx, cy + 1);
+
   return new THREE.CanvasTexture(c);
 }
 

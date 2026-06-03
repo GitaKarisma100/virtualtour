@@ -36,6 +36,7 @@ class HotspotController extends Controller
             'type' => 'required|in:navigation,info,external_link',
             'icon' => 'nullable|string|max:50',
             'url' => 'nullable|url|max:255',
+            
         ]);
 
         $hotspot = new Hotspot();

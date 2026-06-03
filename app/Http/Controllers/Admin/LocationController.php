@@ -12,7 +12,7 @@ class LocationController extends Controller
 {
     public function index(Building $building)
     {
-        $locations = $building->locations()->paginate(10);
+        $locations = $building->locations()->paginate(50);
         return view('admin.locations.index', compact('building', 'locations'));
     }
 
