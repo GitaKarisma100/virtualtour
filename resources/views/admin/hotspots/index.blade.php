@@ -30,6 +30,7 @@
                         <th class="px-lg py-md text-label-md font-label-md text-secondary uppercase tracking-wider">Type</th>
                         <th class="px-lg py-md text-label-md font-label-md text-secondary uppercase tracking-wider">Yaw</th>
                         <th class="px-lg py-md text-label-md font-label-md text-secondary uppercase tracking-wider">Pitch</th>
+                        <th class="px-lg py-md text-label-md font-label-md text-secondary uppercase tracking-wider">Thumbnail</th>
                         <th class="px-lg py-md text-label-md font-label-md text-secondary uppercase tracking-wider">Target</th>
                         <th class="px-lg py-md text-label-md font-label-md text-secondary uppercase tracking-wider text-right">Actions</th>
                     </tr>
@@ -45,12 +46,19 @@
                             </td>
                             <td class="px-lg py-md">
                                 <span class="px-sm py-base rounded text-label-md font-bold
-                                    {{ $hotspot->type === 'navigation' ? 'bg-primary text-on-primary' : ($hotspot->type === 'info' ? 'bg-surface-container text-primary' : 'bg-surface-container-highest text-primary') }}">
-                                    {{ ucfirst(str_replace('_', ' ', $hotspot->type)) }}
+                                    {{ $hotspot->type === 'navigation' ? 'bg-primary text-on-primary' : 'bg-surface-container text-primary' }}">
+                                    {{ $hotspot->type === 'external_link' ? 'Info' : ucfirst(str_replace('_', ' ', $hotspot->type)) }}
                                 </span>
                             </td>
                             <td class="px-lg py-md text-body-md text-secondary">{{ $hotspot->yaw }}°</td>
                             <td class="px-lg py-md text-body-md text-secondary">{{ $hotspot->pitch }}°</td>
+                            <td class="px-lg py-md">
+                                @if($hotspot->thumbnail_path)
+                                    <img src="{{ asset('storage/'.$hotspot->thumbnail_path) }}" alt="" class="h-10 w-14 rounded object-cover">
+                                @else
+                                    <span class="text-body-md text-secondary">—</span>
+                                @endif
+                            </td>
                             <td class="px-lg py-md text-body-md text-secondary">
                                 {{ $hotspot->targetLocation ? $hotspot->targetLocation->name : ($hotspot->url ?? '—') }}
                             </td>
@@ -71,7 +79,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="px-lg py-xl text-center text-body-md text-secondary">No hotspots found. Add one to get started.</td>
+                            <td colspan="7" class="px-lg py-xl text-center text-body-md text-secondary">No hotspots found. Add one to get started.</td>
                         </tr>
                     @endforelse
                 </tbody>

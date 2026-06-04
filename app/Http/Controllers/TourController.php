@@ -38,6 +38,7 @@ class TourController extends Controller
                         'targetId' => $hotspot->target_location_id,
                         'label' => $hotspot->label,
                         'description' => $hotspot->description,
+                        'thumbnail' => $hotspot->thumbnail_path ? asset('storage/'.$hotspot->thumbnail_path) : null,
                         'type' => $hotspot->type,
                         'icon' => $hotspot->icon,
                         'url' => $hotspot->url,

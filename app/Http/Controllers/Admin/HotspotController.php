@@ -13,6 +13,7 @@ class HotspotController extends Controller
     public function index(Building $building, Location $location)
     {
         $hotspots = $location->hotspots()->with('targetLocation')->get();
+
         return view('admin.hotspots.index', compact('building', 'location', 'hotspots'));
     }
 
@@ -22,6 +23,7 @@ class HotspotController extends Controller
             ->where('id', '!=', $location->id)
             ->orderBy('sort_order')
             ->get();
+
         return view('admin.hotspots.form', compact('building', 'location', 'otherLocations'));
     }
 
@@ -33,13 +35,13 @@ class HotspotController extends Controller
             'pitch' => 'required|numeric|min:-90|max:90',
             'label' => 'nullable|string|max:255',
             'description' => 'nullable|string',
-            'type' => 'required|in:navigation,info,external_link',
+            'type' => 'required|in:navigation,info',
             'icon' => 'nullable|string|max:50',
             'url' => 'nullable|url|max:255',
-            
+            'thumbnail' => 'nullable|image|max:2048',
         ]);
 
-        $hotspot = new Hotspot();
+        $hotspot = new Hotspot;
         $hotspot->location_id = $location->id;
         $hotspot->target_location_id = $validated['type'] === 'navigation' ? $validated['target_location_id'] : null;
         $hotspot->yaw = $validated['yaw'];
@@ -48,7 +50,12 @@ class HotspotController extends Controller
         $hotspot->description = $validated['description'] ?? null;
         $hotspot->type = $validated['type'];
         $hotspot->icon = $validated['icon'] ?? null;
-        $hotspot->url = $validated['type'] === 'external_link' ? $validated['url'] : null;
+        $hotspot->url = $validated['type'] === 'info' ? $validated['url'] : null;
+
+        if ($request->hasFile('thumbnail')) {
+            $hotspot->thumbnail_path = $request->file('thumbnail')->store('hotspot-thumbnails', 'public');
+        }
+
         $hotspot->save();
 
         return redirect()->route('admin.buildings.locations.hotspots.index', [$building, $location])->with('success', 'Hotspot created successfully.');
@@ -60,6 +67,7 @@ class HotspotController extends Controller
             ->where('id', '!=', $location->id)
             ->orderBy('sort_order')
             ->get();
+
         return view('admin.hotspots.form', compact('building', 'location', 'hotspot', 'otherLocations'));
     }
 
@@ -71,9 +79,10 @@ class HotspotController extends Controller
             'pitch' => 'required|numeric|min:-90|max:90',
             'label' => 'nullable|string|max:255',
             'description' => 'nullable|string',
-            'type' => 'required|in:navigation,info,external_link',
+            'type' => 'required|in:navigation,info',
             'icon' => 'nullable|string|max:50',
             'url' => 'nullable|url|max:255',
+            'thumbnail' => 'nullable|image|max:2048',
         ]);
 
         $hotspot->target_location_id = $validated['type'] === 'navigation' ? $validated['target_location_id'] : null;
@@ -83,7 +92,12 @@ class HotspotController extends Controller
         $hotspot->description = $validated['description'] ?? null;
         $hotspot->type = $validated['type'];
         $hotspot->icon = $validated['icon'] ?? null;
-        $hotspot->url = $validated['type'] === 'external_link' ? $validated['url'] : null;
+        $hotspot->url = $validated['type'] === 'info' ? $validated['url'] : null;
+
+        if ($request->hasFile('thumbnail')) {
+            $hotspot->thumbnail_path = $request->file('thumbnail')->store('hotspot-thumbnails', 'public');
+        }
+
         $hotspot->save();
 
         return redirect()->route('admin.buildings.locations.hotspots.index', [$building, $location])->with('success', 'Hotspot updated successfully.');

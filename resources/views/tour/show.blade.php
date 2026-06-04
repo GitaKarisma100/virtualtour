@@ -91,6 +91,14 @@
   #sidebar-body p {
     font-size: 15px; color: rgba(255,255,255,0.55); line-height: 1.7; margin: 0;
   }
+  #sidebar-thumb { width: 100%; border-radius: 8px; margin-bottom: 12px; display: none; }
+  #sidebar-link {
+    display: inline-flex; align-items: center; gap: 6px; margin-top: 16px;
+    padding: 8px 20px; background: rgba(79, 195, 247, 0.15); color: #4fc3f7;
+    border: 1px solid rgba(79, 195, 247, 0.3); border-radius: 8px;
+    font-size: 13px; text-decoration: none; transition: all .2s;
+  }
+  #sidebar-link:hover { background: rgba(79, 195, 247, 0.25); }
 </style>
 </head>
 <body>
@@ -115,9 +123,11 @@
     <button id="sidebar-close" onclick="hideInfoPopup()">✕</button>
   </div>
   <div id="sidebar-body">
+    <img id="sidebar-thumb" src="" alt="">
     <h3 id="sidebar-title"></h3>
     <hr>
     <p id="sidebar-desc"></p>
+    <a id="sidebar-link" href="#" target="_blank" rel="noopener">Buka Link</a>
   </div>
 </div>
 
@@ -135,9 +145,15 @@ function hideInfoPopup() {
   document.getElementById('sidebar').classList.remove('open');
 }
 
-function showInfoPopup(label, desc) {
+function showInfoPopup(label, desc, thumb, url) {
+  const img = document.getElementById('sidebar-thumb');
+  if (thumb) { img.src = thumb; img.style.display = 'block'; }
+  else { img.style.display = 'none'; }
   document.getElementById('sidebar-title').textContent = label;
   document.getElementById('sidebar-desc').textContent = desc || '';
+  const link = document.getElementById('sidebar-link');
+  if (url) { link.href = url; link.style.display = 'inline-flex'; }
+  else { link.style.display = 'none'; }
   document.getElementById('sidebar').classList.add('open');
 }
 </script>
@@ -259,6 +275,34 @@ function makeLinkTexture() {
   return new THREE.CanvasTexture(c);
 }
 
+function makePrevTexture() {
+  const { canvas: c, cx, cy, r } = makeCircleCanvas('rgba(255,255,255,0.9)');
+  const g = c.getContext('2d');
+  const s = r * 0.35;
+  g.fillStyle = 'rgba(40, 40, 40, 0.9)';
+  g.beginPath();
+  g.moveTo(cx - s * 0.3, cy);
+  g.lineTo(cx + s * 0.5, cy - s * 0.8);
+  g.lineTo(cx + s * 0.5, cy + s * 0.8);
+  g.closePath();
+  g.fill();
+  return new THREE.CanvasTexture(c);
+}
+
+function makeNextTexture() {
+  const { canvas: c, cx, cy, r } = makeCircleCanvas('rgba(255,255,255,0.9)');
+  const g = c.getContext('2d');
+  const s = r * 0.35;
+  g.fillStyle = 'rgba(40, 40, 40, 0.9)';
+  g.beginPath();
+  g.moveTo(cx + s * 0.3, cy);
+  g.lineTo(cx - s * 0.5, cy - s * 0.8);
+  g.lineTo(cx - s * 0.5, cy + s * 0.8);
+  g.closePath();
+  g.fill();
+  return new THREE.CanvasTexture(c);
+}
+
 function clearMarkers() {
   const scene = viewer.renderer.scene;
   markerMeshes.forEach(m => {
@@ -307,6 +351,8 @@ function addMarkerMesh(yawDeg, pitchDeg, texture, sizeMul, userData) {
 
 const arrowTex = makeArrowTexture();
 const linkTex  = makeLinkTexture();
+const prevTex  = makePrevTexture();
+const nextTex  = makeNextTexture();
 
 function startAnim() {
   const loop = (t) => {
@@ -343,10 +389,14 @@ function setupClick() {
     const data = hits[0].object.userData;
     if (data.type === 'navigation') {
       loadLocation(data.targetIdx);
+    } else if (data.type === 'prev') {
+      loadLocation(currentIdx - 1);
+    } else if (data.type === 'next') {
+      loadLocation(currentIdx + 1);
     } else if (data.type === 'info') {
-      showInfoPopup(data.label, data.description);
+      showInfoPopup(data.label, data.description, data.thumbnail, data.url);
     } else if (data.type === 'external_link' && data.url) {
-      window.open(data.url, '_blank');
+      showInfoPopup(data.label, '', null, data.url);
     }
   });
 
@@ -387,12 +437,19 @@ function loadLocation(idx) {
         const targetIdx = LOCATIONS.findIndex(l => l.id === h.targetId);
         if (targetIdx === -1) return;
         addMarkerMesh(h.yaw, h.pitch ?? -30, arrowTex, 1, { type: 'navigation', targetIdx });
-      } else if (h.type === 'info') {
-        addMarkerMesh(h.yaw, h.pitch ?? -15, makeInfoTexture(h.label), 1.1, { type: 'info', label: h.label, description: h.description });
-      } else if (h.type === 'external_link' && h.url) {
-        addMarkerMesh(h.yaw, h.pitch ?? -20, linkTex, 0.85, { type: 'external_link', url: h.url });
+      } else if (h.type === 'info' || h.type === 'external_link') {
+        addMarkerMesh(h.yaw, h.pitch ?? -15, makeInfoTexture(h.label), 1.1, { type: 'info', label: h.label, description: h.description, thumbnail: h.thumbnail, url: h.url });
       }
     });
+
+    if (LOCATIONS.length > 1) {
+      if (idx > 0) {
+        addMarkerMesh(-70, -15, prevTex, 0.9, { type: 'prev' });
+      }
+      if (idx < LOCATIONS.length - 1) {
+        addMarkerMesh(70, -15, nextTex, 0.9, { type: 'next' });
+      }
+    }
   });
 }
 
