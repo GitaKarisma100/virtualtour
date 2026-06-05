@@ -6,12 +6,12 @@
         <p class="text-label-md font-label-md text-secondary">Campus Admin Panel</p>
     </div>
     <nav class="flex-1 px-sm space-y-base">
-        <a class="flex items-center gap-md px-md py-sm text-secondary hover:bg-surface-container-low transition-colors duration-150 rounded"
+        <a class="flex items-center gap-md px-md py-sm transition-all duration-100 rounded {{ request()->routeIs('admin') ? 'text-primary font-bold bg-surface-container border-r-2 border-primary rounded-sm' : 'text-secondary hover:bg-surface-container-low' }}"
             href="{{ route('admin') }}" @click="sidebarOpen = false">
             <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
             <span class="text-label-md font-label-md">Dashboard</span>
         </a>
-        <a class="flex items-center gap-md px-md py-sm text-primary font-bold bg-surface-container border-r-2 border-primary transition-all duration-100 rounded-sm"
+        <a class="flex items-center gap-md px-md py-sm transition-all duration-100 rounded {{ request()->routeIs('admin.buildings*') ? 'text-primary font-bold bg-surface-container border-r-2 border-primary rounded-sm' : 'text-secondary hover:bg-surface-container-low' }}"
             href="{{ route('admin.buildings.index') }}" @click="sidebarOpen = false">
             <span class="material-symbols-outlined" data-icon="apartment">apartment</span>
             <span class="text-label-md font-label-md">Buildings</span>

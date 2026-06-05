@@ -16,28 +16,8 @@
     border: 1px solid rgba(255,255,255,0.12); border-radius: 12px;
     padding: 12px 18px; color: #fff; pointer-events: none;
   }
-  #hud .label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 4px; }
   #hud .name  { font-size: 17px; font-weight: 600; }
   #hud .desc  { font-size: 12px; color: rgba(255,255,255,0.45); margin-top: 3px; }
-
-  #nav {
-    position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%);
-    z-index: 999; display: flex; gap: 8px;
-    background: rgba(0,0,0,0.6); backdrop-filter: blur(12px);
-    border: 1px solid rgba(255,255,255,0.12); border-radius: 50px; padding: 7px 12px;
-  }
-  .nbtn {
-    display: flex; align-items: center; gap: 7px;
-    background: transparent; border: none; color: rgba(255,255,255,0.5);
-    font-size: 12px; font-family: inherit; padding: 6px 13px; border-radius: 40px;
-    cursor: pointer; transition: all .2s; white-space: nowrap;
-  }
-  .nbtn .dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.25); transition: all .2s; flex-shrink: 0; }
-  .nbtn:hover { color: #fff; background: rgba(255,255,255,0.1); }
-  .nbtn.active { color: #fff; background: rgba(255,255,255,0.14); }
-  .nbtn.active .dot { background: #4fc3f7; box-shadow: 0 0 6px #4fc3f7aa; }
-
-  #hint { position: fixed; bottom: 28px; right: 24px; z-index: 999; color: rgba(255,255,255,0.3); font-size: 11px; pointer-events: none; }
 
   #loading {
     position: fixed; inset: 0; z-index: 9999; background: #0a0a0a;
@@ -48,6 +28,7 @@
   .spin { width: 34px; height: 34px; border: 3px solid rgba(255,255,255,0.1); border-top-color: #4fc3f7; border-radius: 50%; animation: spin .8s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
   #loading p { color: rgba(255,255,255,0.35); font-size: 13px; }
+
   #back-btn {
     position: fixed; top: 24px; right: 24px; z-index: 999;
     background: rgba(0,0,0,0.6); backdrop-filter: blur(12px);
@@ -57,6 +38,99 @@
   }
   #back-btn:hover { background: rgba(0,0,0,0.8); }
 
+  /* ── Bottom Panel ── */
+  #bottom-panel {
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 999;
+    background: rgba(0,0,0,0.45); backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(255,255,255,0.07);
+    display: flex; flex-direction: column;
+    transition: transform .3s cubic-bezier(.22,1,.36,1), opacity .3s;
+  }
+  #bottom-panel.hidden {
+    transform: translateY(100%); opacity: 0; pointer-events: none;
+  }
+
+  #toggle-panel-btn {
+    position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+    z-index: 1000; background: rgba(0,0,0,0.45); backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1); border-bottom: none;
+    border-radius: 8px 8px 0 0; padding: 4px 14px 2px;
+    color: rgba(255,255,255,0.5); cursor: pointer; font-size: 10px;
+    letter-spacing: 1px; transition: color .2s, background .2s;
+    display: flex; align-items: center; gap: 5px; white-space: nowrap;
+  }
+  #toggle-panel-btn:hover { color: #fff; background: rgba(0,0,0,0.6); }
+  #toggle-panel-btn.panel-hidden { bottom: 0; border-radius: 8px 8px 0 0; }
+  #toggle-panel-btn svg { transition: transform .3s; }
+  #toggle-panel-btn.panel-hidden svg { transform: rotate(180deg); }
+
+  /* Thumbnail Strip */
+  #thumbnail-strip {
+    display: flex; gap: 6px; overflow-x: auto;
+    padding: 10px 10px 6px;
+    scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.18) transparent;
+  }
+  #thumbnail-strip::-webkit-scrollbar { height: 4px; }
+  #thumbnail-strip::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 2px; }
+
+  .thumb-item {
+    flex-shrink: 0; position: relative; width: 130px; height: 74px;
+    border-radius: 5px; overflow: hidden; cursor: pointer;
+    border: 2px solid rgba(255,255,255,0.12);
+    transition: border-color .2s, transform .15s;
+  }
+  .thumb-item:hover { border-color: rgba(255,255,255,0.5); transform: translateY(-2px); }
+  .thumb-item.active { border-color: #fff; }
+  .thumb-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .thumb-item .thumb-name {
+    position: absolute; top: 0; left: 0; right: 0;
+    padding: 5px 7px;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.75) 0%, transparent 100%);
+    color: #fff; font-size: 10px; font-weight: 500;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    line-height: 1.3;
+  }
+
+  /* Controls Bar */
+  #controls-bar {
+    display: flex; align-items: center; gap: 2px;
+    padding: 6px 12px 10px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .ctrl-btn {
+    background: transparent; border: none;
+    color: rgba(255,255,255,0.65);
+    cursor: pointer; width: 30px; height: 30px;
+    border-radius: 6px; display: flex; align-items: center;
+    justify-content: center; font-size: 14px;
+    transition: background .15s, color .15s; flex-shrink: 0;
+  }
+  .ctrl-btn:hover { background: rgba(255,255,255,0.12); color: #fff; }
+  .ctrl-btn:active { background: rgba(255,255,255,0.2); }
+  .ctrl-btn svg { pointer-events: none; }
+
+  .ctrl-sep { width: 1px; height: 18px; background: rgba(255,255,255,0.12); margin: 0 6px; flex-shrink: 0; }
+
+  #zoom-slider {
+    -webkit-appearance: none; appearance: none;
+    width: 80px; height: 3px;
+    background: rgba(255,255,255,0.22); border-radius: 2px;
+    outline: none; cursor: pointer; flex-shrink: 0;
+  }
+  #zoom-slider::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 13px; height: 13px;
+    border-radius: 50%; background: #fff; cursor: pointer;
+    box-shadow: 0 0 4px rgba(0,0,0,0.5);
+  }
+  #zoom-slider::-moz-range-thumb {
+    width: 13px; height: 13px; border: none;
+    border-radius: 50%; background: #fff; cursor: pointer;
+  }
+
+  #fullscreen-btn { margin-left: auto; }
+
+  /* Sidebar */
   #sidebar {
     position: fixed; top: 0; right: 0; z-index: 9998;
     width: 420px; max-width: 100vw; height: 100vh;
@@ -79,18 +153,10 @@
     font-size: 24px; cursor: pointer; padding: 4px; line-height: 1;
   }
   #sidebar-close:hover { color: #fff; }
-  #sidebar-body {
-    padding: 20px 28px 28px; overflow-y: auto; flex: 1;
-  }
-  #sidebar-body h3 {
-    font-size: 22px; font-weight: 600; color: #fff; margin: 0 0 6px;
-  }
-  #sidebar-body hr {
-    border: none; border-top: 1px solid rgba(255,255,255,0.06); margin: 16px 0;
-  }
-  #sidebar-body p {
-    font-size: 15px; color: rgba(255,255,255,0.55); line-height: 1.7; margin: 0;
-  }
+  #sidebar-body { padding: 20px 28px 28px; overflow-y: auto; flex: 1; }
+  #sidebar-body h3 { font-size: 22px; font-weight: 600; color: #fff; margin: 0 0 6px; }
+  #sidebar-body hr { border: none; border-top: 1px solid rgba(255,255,255,0.06); margin: 16px 0; }
+  #sidebar-body p { font-size: 15px; color: rgba(255,255,255,0.55); line-height: 1.7; margin: 0; }
   #sidebar-thumb { width: 100%; border-radius: 8px; margin-bottom: 12px; display: none; }
   #sidebar-link {
     display: inline-flex; align-items: center; gap: 6px; margin-top: 16px;
@@ -107,15 +173,86 @@
 <div id="viewer"></div>
 
 <div id="hud">
-  <!-- <div class="label">Lokasi saat ini</div> -->
   <div class="name" id="loc-name">—</div>
   <div class="desc" id="loc-desc"></div>
 </div>
 
 <a href="{{ route('tour.index') }}" id="back-btn">← Kembali</a>
 
-<div id="nav"></div>
-<div id="hint">Klik panah untuk navigasi • Klik marker info untuk detail</div>
+<!-- Toggle Button -->
+<button id="toggle-panel-btn" title="Sembunyikan/tampilkan panel">
+  <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/>
+  </svg>
+  PANEL
+</button>
+
+<!-- Bottom Panel: Thumbnail Strip + Controls -->
+<div id="bottom-panel">
+  <div id="thumbnail-strip"></div>
+  <div id="controls-bar">
+    <!-- Zoom -->
+    <button class="ctrl-btn" id="btn-zoom-out" title="Zoom out">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+        <circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="22" y2="22"/>
+        <line x1="8" y1="11" x2="14" y2="11"/>
+      </svg>
+    </button>
+    <input type="range" id="zoom-slider" min="0" max="100" value="0" title="Zoom">
+    <button class="ctrl-btn" id="btn-zoom-in" title="Zoom in">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+        <circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="22" y2="22"/>
+        <line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/>
+      </svg>
+    </button>
+
+    <div class="ctrl-sep"></div>
+
+    <!-- Pan -->
+    <button class="ctrl-btn" id="btn-pan-left" title="Putar kiri">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6z"/>
+      </svg>
+    </button>
+    <button class="ctrl-btn" id="btn-pan-right" title="Putar kanan">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/>
+      </svg>
+    </button>
+    <button class="ctrl-btn" id="btn-pan-up" title="Putar atas">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/>
+      </svg>
+    </button>
+    <button class="ctrl-btn" id="btn-pan-down" title="Putar bawah">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/>
+      </svg>
+    </button>
+
+    <div class="ctrl-sep"></div>
+
+    <!-- Download -->
+    <button class="ctrl-btn" id="btn-download" title="Unduh panorama">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+        <polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+      </svg>
+    </button>
+
+    <!-- Fullscreen -->
+    <button class="ctrl-btn" id="fullscreen-btn" title="Layar penuh">
+      <svg id="fs-icon-expand" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+        <polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/>
+        <line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/>
+      </svg>
+      <svg id="fs-icon-compress" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="display:none">
+        <polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/>
+        <line x1="10" y1="14" x2="3" y2="21"/><line x1="21" y1="3" x2="14" y2="10"/>
+      </svg>
+    </button>
+  </div>
+</div>
 
 <div id="sidebar">
   <div id="sidebar-header">
@@ -168,6 +305,7 @@ let viewer      = null;
 let currentIdx  = 0;
 let markerMeshes = [];
 const SPHERE_R  = 1;
+const PAN_STEP  = THREE.MathUtils.degToRad(15);
 
 function makeCircleCanvas(bgColor) {
   const S = 512;
@@ -223,28 +361,25 @@ function makeInfoTexture(label) {
   const text = (label || '').trim();
   const c = document.createElement('canvas');
   const g = c.getContext('2d');
-  
-  const fontSize = 18; 
+
+  const fontSize = 18;
   g.font = `bold ${fontSize}px sans-serif`;
-  
-  // Kalkulasi lebar oval mengikuti panjang teks
+
   const textWidth = g.measureText(text).width;
-  const rectWidth = textWidth + 30;  // Panjang oval otomatis
-  const rectHeight = fontSize + 15;  // Tinggi oval
-  
+  const rectWidth = textWidth + 30;
+  const rectHeight = fontSize + 15;
+
   c.width = rectWidth + 20;
   c.height = rectHeight + 30;
-  
+
   const cx = c.width / 2;
   const cy = c.height / 2 - 5;
 
-  // Gambar Background Oval (Biru Tua Poliwangi Semi-Transparan)
   g.beginPath();
   g.roundRect(cx - rectWidth / 2, cy - rectHeight / 2, rectWidth, rectHeight, rectHeight / 2);
-  g.fillStyle = 'rgba(0, 51, 102, 0.75)'; // Ganti angka ini jika ingin lebih/kurang transparan
+  g.fillStyle = 'rgba(0, 51, 102, 0.75)';
   g.fill();
 
-  // Gambar Teks
   g.fillStyle = '#ffffff';
   g.textAlign = 'center';
   g.textBaseline = 'middle';
@@ -408,15 +543,31 @@ function setupClick() {
   });
 }
 
-function updateNav() {
-  const nav = document.getElementById('nav');
-  nav.innerHTML = '';
+function updateThumbnails() {
+  const strip = document.getElementById('thumbnail-strip');
+  strip.innerHTML = '';
   LOCATIONS.forEach((loc, i) => {
-    const b = document.createElement('button');
-    b.className = 'nbtn' + (i === currentIdx ? ' active' : '');
-    b.innerHTML = `<span class="dot"></span>${loc.name}`;
-    b.onclick   = () => loadLocation(i);
-    nav.appendChild(b);
+    const item = document.createElement('div');
+    item.className = 'thumb-item' + (i === currentIdx ? ' active' : '');
+    item.title = loc.name;
+
+    const img = document.createElement('img');
+    img.src = loc.image;
+    img.alt = loc.name;
+    img.loading = 'lazy';
+
+    const label = document.createElement('div');
+    label.className = 'thumb-name';
+    label.textContent = loc.name;
+
+    item.appendChild(img);
+    item.appendChild(label);
+    item.addEventListener('click', () => loadLocation(i));
+    strip.appendChild(item);
+
+    if (i === currentIdx) {
+      setTimeout(() => item.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' }), 50);
+    }
   });
 }
 
@@ -427,7 +578,7 @@ function loadLocation(idx) {
 
   document.getElementById('loc-name').textContent = loc.name;
   document.getElementById('loc-desc').textContent = loc.description || '';
-  updateNav();
+  updateThumbnails();
 
   viewer.setPanorama(loc.image).then(() => {
     viewer.rotate({ yaw: (loc.yaw || 0) + 'deg', pitch: (loc.pitch || 0) + 'deg' });
@@ -453,6 +604,66 @@ function loadLocation(idx) {
   });
 }
 
+/* ── Controls ── */
+function zoomIn()  { viewer.zoom(viewer.getZoomLevel() + 10); }
+function zoomOut() { viewer.zoom(viewer.getZoomLevel() - 10); }
+
+function pan(dyaw, dpitch) {
+  const pos = viewer.getPosition();
+  viewer.rotate({ yaw: pos.yaw + dyaw, pitch: pos.pitch + dpitch });
+}
+
+function toggleFullscreen() {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen();
+  } else {
+    document.exitFullscreen();
+  }
+}
+
+function downloadPanorama() {
+  const loc = LOCATIONS[currentIdx];
+  const a = document.createElement('a');
+  a.href = loc.image;
+  a.download = loc.name + '.jpg';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+/* ── Wiring up controls after viewer ready ── */
+function initControls() {
+  document.getElementById('btn-zoom-in').addEventListener('click', zoomIn);
+  document.getElementById('btn-zoom-out').addEventListener('click', zoomOut);
+  document.getElementById('btn-pan-left').addEventListener('click',  () => pan(-PAN_STEP, 0));
+  document.getElementById('btn-pan-right').addEventListener('click', () => pan(PAN_STEP,  0));
+  document.getElementById('btn-pan-up').addEventListener('click',    () => pan(0, PAN_STEP));
+  document.getElementById('btn-pan-down').addEventListener('click',  () => pan(0, -PAN_STEP));
+  document.getElementById('btn-download').addEventListener('click', downloadPanorama);
+  document.getElementById('fullscreen-btn').addEventListener('click', toggleFullscreen);
+
+  const slider = document.getElementById('zoom-slider');
+  slider.addEventListener('input', () => viewer.zoom(parseInt(slider.value)));
+
+  viewer.addEventListener('zoom-updated', (e) => {
+    slider.value = e.zoomLevel;
+  });
+
+  document.addEventListener('fullscreenchange', () => {
+    const isFs = !!document.fullscreenElement;
+    document.getElementById('fs-icon-expand').style.display  = isFs ? 'none' : '';
+    document.getElementById('fs-icon-compress').style.display = isFs ? '' : 'none';
+  });
+
+  const toggleBtn = document.getElementById('toggle-panel-btn');
+  const panel     = document.getElementById('bottom-panel');
+  toggleBtn.addEventListener('click', () => {
+    const hidden = panel.classList.toggle('hidden');
+    toggleBtn.classList.toggle('panel-hidden', hidden);
+    toggleBtn.querySelector('svg').style.transform = hidden ? 'rotate(180deg)' : '';
+  });
+}
+
 viewer = new Viewer({
   container:      document.getElementById('viewer'),
   panorama:       LOCATIONS[0].image,
@@ -469,6 +680,7 @@ viewer.addEventListener('ready', () => {
   loadLocation(0);
   startAnim();
   setTimeout(setupClick, 400);
+  initControls();
 });
 </script>
 </body>
