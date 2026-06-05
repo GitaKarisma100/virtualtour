@@ -97,7 +97,7 @@
                         <span class="text-label-md font-label-md">{{ isset($location) ? 'Update' : 'Create' }}</span>
                     </button>
                     <a href="{{ route('admin.buildings.locations.index', $building) }}"
-                        class="px-lg py-sm border border-outline-variant rounded-lg hover:bg-surface-container text-label-md transition-colors">
+                        class="px-lg py-sm bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 text-label-md transition-colors">
                         Cancel
                     </a>
                 </div>

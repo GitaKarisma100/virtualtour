@@ -15,11 +15,6 @@
         </a>
     </div>
 
-    @if(session('success'))
-        <div class="mb-lg p-md bg-surface-container-low border border-outline-variant rounded-xl text-body-md text-primary">
-            {{ session('success') }}
-        </div>
-    @endif
 
     <div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden shadow-sm">
         <div class="overflow-x-auto">
@@ -64,13 +59,13 @@
                             </td>
                             <td class="px-lg py-md text-right">
                                 <div class="flex items-center justify-end gap-sm">
-                                    <a href="{{ route('admin.buildings.locations.hotspots.edit', [$building, $location, $hotspot]) }}" class="p-sm text-secondary hover:text-primary transition-colors" title="Edit">
+                                    <a href="{{ route('admin.buildings.locations.hotspots.edit', [$building, $location, $hotspot]) }}" class="p-sm rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors" title="Edit">
                                         <span class="material-symbols-outlined" data-icon="edit">edit</span>
                                     </a>
-                                    <form action="{{ route('admin.buildings.locations.hotspots.destroy', [$building, $location, $hotspot]) }}" method="POST" class="inline" onsubmit="return confirm('Delete this hotspot?')">
+                                    <form action="{{ route('admin.buildings.locations.hotspots.destroy', [$building, $location, $hotspot]) }}" method="POST" class="inline" data-confirm="Yakin ingin menghapus hotspot ini?">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="p-sm text-secondary hover:text-error transition-colors" title="Delete">
+                                        <button type="submit" class="p-sm rounded-lg bg-red-50 text-red-500 hover:bg-red-100 transition-colors" title="Delete">
                                             <span class="material-symbols-outlined" data-icon="delete">delete</span>
                                         </button>
                                     </form>
@@ -89,7 +84,7 @@
 
     <div class="pt-lg flex items-center gap-sm">
         <a href="{{ route('admin.buildings.locations.index', $building) }}"
-            class="px-lg py-sm border border-outline-variant rounded-lg hover:bg-surface-container text-label-md transition-colors">
+            class="px-lg py-sm bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 text-label-md transition-colors">
             ← Back to Locations
         </a>
     </div>
