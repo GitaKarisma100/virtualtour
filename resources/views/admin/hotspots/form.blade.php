@@ -13,7 +13,7 @@
     </div>
 
     <div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden shadow-sm p-lg">
-        <form action="{{ isset($hotspot) ? route('admin.buildings.locations.hotspots.update', [$building, $location, $hotspot]) : route('admin.buildings.locations.hotspots.store', [$building, $location]) }}" method="POST">
+        <form action="{{ isset($hotspot) ? route('admin.buildings.locations.hotspots.update', [$building, $location, $hotspot]) : route('admin.buildings.locations.hotspots.store', [$building, $location]) }}" method="POST" enctype="multipart/form-data">
             @csrf
             @if(isset($hotspot))
                 @method('PUT')
@@ -26,7 +26,6 @@
                         class="w-full px-md py-sm bg-surface-container-low border border-outline-variant focus:border-primary focus:ring-0 rounded-lg text-body-md transition-all outline-none">
                         <option value="navigation" {{ old('type', $hotspot->type ?? '') === 'navigation' ? 'selected' : '' }}>Navigation</option>
                         <option value="info" {{ old('type', $hotspot->type ?? '') === 'info' ? 'selected' : '' }}>Info</option>
-                        <option value="external_link" {{ old('type', $hotspot->type ?? '') === 'external_link' ? 'selected' : '' }}>External Link</option>
                     </select>
                     @error('type')
                         <p class="text-label-md text-error mt-xs">{{ $message }}</p>
@@ -73,10 +72,25 @@
                     </select>
                 </div>
 
-                <div id="url-field" class="{{ old('type', $hotspot->type ?? '') !== 'external_link' ? 'hidden' : '' }}">
-                    <label class="text-label-md font-label-md text-primary mb-base block">URL</label>
-                    <input type="url" name="url" value="{{ old('url', $hotspot->url ?? '') }}"
-                        class="w-full px-md py-sm bg-surface-container-low border border-outline-variant focus:border-primary focus:ring-0 rounded-lg text-body-md transition-all outline-none" />
+                <div id="info-fields" class="space-y-lg {{ old('type', $hotspot->type ?? '') !== 'info' ? 'hidden' : '' }}">
+                    <div>
+                        <label class="text-label-md font-label-md text-primary mb-base block">Thumbnail</label>
+                        @if(isset($hotspot) && $hotspot->thumbnail_path)
+                            <div class="mb-sm">
+                                <img src="{{ asset('storage/'.$hotspot->thumbnail_path) }}" alt="Current thumbnail" class="h-24 rounded object-cover">
+                            </div>
+                        @endif
+                        <input type="file" name="thumbnail" accept="image/*"
+                            class="w-full px-md py-sm bg-surface-container-low border border-outline-variant focus:border-primary focus:ring-0 rounded-lg text-body-md transition-all" />
+                        @error('thumbnail')
+                            <p class="text-label-md text-error mt-xs">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    <div>
+                        <label class="text-label-md font-label-md text-primary mb-base block">URL</label>
+                        <input type="url" name="url" value="{{ old('url', $hotspot->url ?? '') }}"
+                            class="w-full px-md py-sm bg-surface-container-low border border-outline-variant focus:border-primary focus:ring-0 rounded-lg text-body-md transition-all outline-none" />
+                    </div>
                 </div>
 
                 <div>
@@ -92,7 +106,7 @@
                         <span class="text-label-md font-label-md">{{ isset($hotspot) ? 'Update' : 'Create' }}</span>
                     </button>
                     <a href="{{ route('admin.buildings.locations.hotspots.index', [$building, $location]) }}"
-                        class="px-lg py-sm border border-outline-variant rounded-lg hover:bg-surface-container text-label-md transition-colors">
+                        class="px-lg py-sm bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 text-label-md transition-colors">
                         Cancel
                     </a>
                 </div>
@@ -103,7 +117,7 @@
     <script>
         document.getElementById('type').addEventListener('change', function() {
             document.getElementById('target-field').classList.toggle('hidden', this.value !== 'navigation');
-            document.getElementById('url-field').classList.toggle('hidden', this.value !== 'external_link');
+            document.getElementById('info-fields').classList.toggle('hidden', this.value !== 'info');
         });
     </script>
 @endsection

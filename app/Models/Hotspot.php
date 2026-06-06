@@ -14,6 +14,7 @@ class Hotspot extends Model
         'pitch',
         'label',
         'description',
+        'thumbnail_path',
         'type',
         'icon',
         'url',
