@@ -6,15 +6,15 @@
     <title>Virtual Tour</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-900 text-white min-h-screen">
+<body class="bg-[#001829] text-white min-h-screen">
     <div class="container mx-auto px-4 py-8">
-        <h1 class="text-4xl font-bold text-center mb-4">Virtual Tour</h1>
-        <p class="text-center text-gray-400 mb-12">Pilih gedung untuk memulai tur virtual</p>
+        <h1 class="text-4xl font-bold text-center mb-4">Siap Menjelajahi Poliwangi?</h1>
+        <p class="text-center text-gray-400 mb-12">Pilih gedung untuk memulai Virtual</p>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             @forelse($buildings as $building)
                 <a href="{{ route('tour.show', $building) }}" class="block group">
-                    <div class="bg-gray-800 rounded-lg overflow-hidden shadow-lg transition-transform group-hover:scale-105">
+                    <div class="bg-[#003154] rounded-lg overflow-hidden shadow-lg transition-transform group-hover:scale-105">
                         @if($building->thumbnail_path)
                             <img src="{{ asset('storage/' . $building->thumbnail_path) }}"
                                  alt="{{ $building->name }}"
@@ -28,7 +28,7 @@
                             </div>
                         @endif
                         <div class="p-4">
-                            <h2 class="text-xl font-semibold group-hover:text-blue-400 transition-colors">
+                            <h2 class="text-xl font-semibold group-hover:text-[#F3B414] transition-colors">
                                 {{ $building->name }}
                             </h2>
                             @if($building->description)

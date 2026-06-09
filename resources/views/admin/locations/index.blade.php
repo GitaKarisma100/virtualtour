@@ -6,12 +6,12 @@
             <h2 class="text-headline-lg font-headline-lg text-primary tracking-tight">
                 Locations — {{ $building->name }}
             </h2>
-            <p class="text-body-md font-body-md text-secondary">Manage 360° panorama locations.</p>
+            <p class="text-body-md font-body-md text-secondary">Kelola lokasi panorama 360°</p>
         </div>
         <a href="{{ route('admin.buildings.locations.create', $building) }}"
             class="flex items-center gap-sm px-lg py-sm bg-primary text-on-primary rounded-lg hover:opacity-90 active:scale-[0.98] transition-all">
             <span class="material-symbols-outlined text-[18px]" data-icon="add">add</span>
-            <span class="text-label-md font-label-md">Add Location</span>
+            <span class="text-label-md font-label-md">Tambah Lokasi</span>
         </a>
     </div>
 
@@ -21,8 +21,8 @@
             <table class="w-full text-left border-collapse min-w-[640px]">
                 <thead>
                     <tr class="bg-surface-container-low border-b border-outline-variant">
-                        <th class="px-lg py-md text-label-md font-label-md text-secondary uppercase tracking-wider">Image</th>
-                        <th class="px-lg py-md text-label-md font-label-md text-secondary uppercase tracking-wider">Name</th>
+                        <th class="px-lg py-md text-label-md font-label-md text-secondary uppercase tracking-wider">Gambar</th>
+                        <th class="px-lg py-md text-label-md font-label-md text-secondary uppercase tracking-wider">Nama</th>
                         <th class="px-lg py-md text-label-md font-label-md text-secondary uppercase tracking-wider">HFOV</th>
                         <th class="px-lg py-md text-label-md font-label-md text-secondary uppercase tracking-wider">Yaw</th>
                         <th class="px-lg py-md text-label-md font-label-md text-secondary uppercase tracking-wider">Pitch</th>

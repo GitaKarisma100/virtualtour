@@ -18,9 +18,17 @@ class BuildingController extends Controller
 
     public function create()
     {
-        return view('admin.buildings.form');
-    }
+         // Hitung nomor berikutnya
+    $lastId = Building::max('id') ?? 0;
+    $nextNumber = $lastId + 1;
 
+    // Default name
+    $defaultName = 'Building ' . $nextNumber;
+
+    return view('admin.buildings.form', compact('defaultName'));
+}
+
+        
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -63,6 +71,7 @@ class BuildingController extends Controller
             'latitude' => 'nullable|numeric|min:-90|max:90',
             'longitude' => 'nullable|numeric|min:-180|max:180',
             'thumbnail' => 'nullable|image|max:2048',
+            'thumbnail' => 'nullable|image|max:10240',
             'sort_order' => 'nullable|integer|min:0',
             'is_active' => 'nullable|boolean',
         ]);

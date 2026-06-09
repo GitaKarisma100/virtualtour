@@ -34,4 +34,9 @@ Route::middleware([
         Route::resource('buildings.locations', LocationController::class)->shallow(false);
         Route::resource('buildings.locations.hotspots', HotspotController::class)->shallow(false);
     });
+// Rute Preview untuk Gedung
+Route::get('admin/virtual-tour/buildings/{building}/preview', [App\Http\Controllers\Admin\BuildingPreviewController::class, 'previewBuilding'])
+    ->name('admin.buildings.preview');
+Route::get('admin/virtual-tour/buildings/{building}/locations/{location}/preview', [TourController::class, 'previewLocation'])
+    ->name('admin.locations.preview');
 });
