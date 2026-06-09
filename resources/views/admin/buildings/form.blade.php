@@ -39,6 +39,25 @@
                     @enderror
                 </div>
 
+                <div class="grid grid-cols-2 gap-md">
+                    <div>
+                        <label class="text-label-md font-label-md text-primary mb-base block">Latitude</label>
+                        <input type="number" name="latitude" value="{{ old('latitude', $building->latitude ?? '') }}" step="any" min="-90" max="90"
+                            class="w-full px-md py-sm bg-surface-container-low border border-outline-variant focus:border-primary focus:ring-0 rounded-lg text-body-md transition-all outline-none" placeholder="-8.2186" />
+                        @error('latitude')
+                            <p class="text-label-md text-error mt-xs">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    <div>
+                        <label class="text-label-md font-label-md text-primary mb-base block">Longitude</label>
+                        <input type="number" name="longitude" value="{{ old('longitude', $building->longitude ?? '') }}" step="any" min="-180" max="180"
+                            class="w-full px-md py-sm bg-surface-container-low border border-outline-variant focus:border-primary focus:ring-0 rounded-lg text-body-md transition-all outline-none" placeholder="114.3667" />
+                        @error('longitude')
+                            <p class="text-label-md text-error mt-xs">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
+
                 <div>
                     <label class="text-label-md font-label-md text-primary mb-base block">Thumbnail</label>
                     @if(isset($building) && $building->thumbnail_path)

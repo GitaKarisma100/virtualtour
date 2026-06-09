@@ -5,19 +5,31 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{{ $building->name }} - Virtual Tour</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/core@5.4.4/index.min.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { background: #0a0a0a; font-family: 'Segoe UI', sans-serif; overflow: hidden; }
   #viewer { width: 100vw; height: 100vh; position: fixed; top: 0; left: 0; z-index: 1; }
 
-  #hud {
+  #map-container {
     position: fixed; top: 24px; left: 24px; z-index: 999;
-    background: rgba(0,0,0,0.6); backdrop-filter: blur(12px);
-    border: 1px solid rgba(255,255,255,0.12); border-radius: 12px;
-    padding: 12px 18px; color: #fff; pointer-events: none;
+    width: 220px; height: 220px;
+    background: rgba(0,0,0,0.55); backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.1); border-radius: 14px;
+    overflow: hidden;
+    display: flex; flex-direction: column;
   }
-  #hud .name  { font-size: 17px; font-weight: 600; }
-  #hud .desc  { font-size: 12px; color: rgba(255,255,255,0.45); margin-top: 3px; }
+  #leaflet-map { width: 100%; flex: 1; }
+  #leaflet-map .leaflet-control-zoom { display: none; }
+  #leaflet-map .leaflet-control-attribution { font-size: 8px; }
+  #map-label {
+    padding: 5px 10px 7px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    color: #fff; pointer-events: none; flex-shrink: 0;
+  }
+  #map-label .name  { font-size: 12px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #map-label .desc  { font-size: 10px; color: rgba(255,255,255,0.4); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
   #loading {
     position: fixed; inset: 0; z-index: 9999; background: #0a0a0a;
@@ -28,6 +40,9 @@
   .spin { width: 34px; height: 34px; border: 3px solid rgba(255,255,255,0.1); border-top-color: #4fc3f7; border-radius: 50%; animation: spin .8s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
   #loading p { color: rgba(255,255,255,0.35); font-size: 13px; }
+
+  .mm-tooltip { background: rgba(0,0,0,0.85) !important; border: 1px solid rgba(255,255,255,0.12) !important; color: #fff !important; font-size: 11px !important; font-weight: 500 !important; padding: 3px 8px !important; border-radius: 6px !important; box-shadow: none !important; }
+  .mm-tooltip::before { border-top-color: rgba(0,0,0,0.85) !important; }
 
   #back-btn {
     position: fixed; top: 24px; right: 24px; z-index: 999;
@@ -181,9 +196,12 @@
 <div id="loading"><div class="spin"></div><p>Memuat virtual tour…</p></div>
 <div id="viewer"></div>
 
-<div id="hud">
-  <div class="name" id="loc-name">—</div>
-  <div class="desc" id="loc-desc"></div>
+<div id="map-container">
+  <div id="leaflet-map"></div>
+  <div id="map-label">
+    <div class="name" id="loc-name">—</div>
+    <div class="desc" id="loc-desc"></div>
+  </div>
 </div>
 
 <a href="{{ route('tour.index') }}" id="back-btn">← Kembali</a>
@@ -333,6 +351,8 @@ import { Viewer } from '@photo-sphere-viewer/core';
 import * as THREE from 'three';
 
 const LOCATIONS = {!! $locationsJson !!};
+const BUILDING_LAT = {{ $buildingLat ?? 'null' }};
+const BUILDING_LNG = {{ $buildingLng ?? 'null' }};
 
 let viewer      = null;
 let currentIdx  = 0;
@@ -612,6 +632,7 @@ function loadLocation(idx) {
   document.getElementById('loc-name').textContent = loc.name;
   document.getElementById('loc-desc').textContent = loc.description || '';
   updateThumbnails();
+  updateMap(idx);
 
   viewer.setPanorama(loc.image).then(() => {
     viewer.rotate({ yaw: (loc.yaw || 0) + 'deg', pitch: (loc.pitch || 0) + 'deg' });
@@ -697,6 +718,92 @@ function initControls() {
   });
 }
 
+/* ── Leaflet Mini Map ── */
+let leafletMap = null;
+let leafletLayer = null;
+const mmMarkers = [];
+const mmLines = [];
+
+function initLeafletMap() {
+  if (!BUILDING_LAT || !BUILDING_LNG) return;
+
+  leafletMap = L.map('leaflet-map', {
+    center: [BUILDING_LAT, BUILDING_LNG],
+    zoom: 17,
+    zoomControl: false,
+    attributionControl: true,
+    dragging: false,
+    scrollWheelZoom: false,
+    doubleClickZoom: false,
+    touchZoom: false,
+    keyboard: false,
+  });
+  leafletLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '© OpenStreetMap',
+  }).addTo(leafletMap);
+  updateMap(0);
+}
+
+function computeConnections(locs) {
+  const pairs = [];
+  locs.forEach((loc, i) => {
+    (loc.hotspots || []).forEach(h => {
+      if (h.type !== 'navigation') return;
+      const j = locs.findIndex(l => l.id === h.targetId);
+      if (j === -1 || j === i) return;
+      const key = Math.min(i, j) + '-' + Math.max(i, j);
+      if (!pairs.find(p => p.key === key)) pairs.push({ key, from: i, to: j });
+    });
+  });
+  return pairs;
+}
+
+function updateMap(activeIdx) {
+  if (!leafletMap) return;
+  mmMarkers.forEach(m => leafletMap.removeLayer(m));
+  mmLines.forEach(m => leafletMap.removeLayer(m));
+  mmMarkers.length = 0;
+  mmLines.length = 0;
+
+  const coords = LOCATIONS.map(l => l.map_x != null && l.map_y != null ? [l.map_x, l.map_y] : null);
+
+  // fit bounds
+  const valid = coords.filter(c => c);
+  if (valid.length) {
+    const bounds = L.latLngBounds(valid);
+    leafletMap.fitBounds(bounds, { padding: [30, 30], maxZoom: 18 });
+  }
+
+  // connection lines
+  const conns = computeConnections(LOCATIONS);
+  conns.forEach(c => {
+    const a = coords[c.from], b = coords[c.to];
+    if (!a || !b) return;
+    const line = L.polyline([a, b], {
+      color: 'rgba(255,255,255,0.35)', weight: 2, dashArray: '4 6',
+    }).addTo(leafletMap);
+    mmLines.push(line);
+  });
+
+  // markers
+  LOCATIONS.forEach((loc, i) => {
+    const c = coords[i];
+    if (!c) return;
+    const isActive = i === activeIdx;
+    const marker = L.circleMarker(c, {
+      radius: isActive ? 8 : 5,
+      color: isActive ? '#fff' : 'rgba(255,255,255,0.5)',
+      fillColor: isActive ? '#4fc3f7' : 'rgba(255,255,255,0.7)',
+      fillOpacity: 1,
+      weight: isActive ? 2 : 1,
+    }).addTo(leafletMap);
+    marker.bindTooltip(loc.name, { direction: 'top', offset: [0, -6], className: 'mm-tooltip' });
+    marker.on('click', () => { if (i !== currentIdx) loadLocation(i); });
+    mmMarkers.push(marker);
+  });
+}
+
 viewer = new Viewer({
   container:      document.getElementById('viewer'),
   panorama:       LOCATIONS[0].image,
@@ -710,6 +817,7 @@ viewer = new Viewer({
 
 viewer.addEventListener('ready', () => {
   document.getElementById('loading').classList.add('hidden');
+  initLeafletMap();
   loadLocation(0);
   startAnim();
   setTimeout(setupClick, 400);

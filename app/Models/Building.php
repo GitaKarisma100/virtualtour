@@ -10,6 +10,8 @@ class Building extends Model
     protected $fillable = [
         'name',
         'description',
+        'latitude',
+        'longitude',
         'thumbnail_path',
         'sort_order',
         'is_active',
@@ -18,6 +20,8 @@ class Building extends Model
     protected $casts = [
         'is_active' => 'boolean',
         'sort_order' => 'integer',
+        'latitude' => 'float',
+        'longitude' => 'float',
     ];
 
     public function locations(): HasMany

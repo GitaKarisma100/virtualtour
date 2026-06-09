@@ -75,6 +75,8 @@ class TourController extends Controller
                 'hfov' => (int) ($location->hfov ?? 100),
                 'yaw' => (float) ($location->yaw ?? 0),
                 'pitch' => (float) ($location->pitch ?? 0),
+                'map_x' => $location->map_x !== null ? (float) $location->map_x : null,
+                'map_y' => $location->map_y !== null ? (float) $location->map_y : null,
                 'hotspots' => $location->hotspots->map(function ($hotspot) {
                     return [
                         'id' => $hotspot->id,
@@ -91,5 +93,10 @@ class TourController extends Controller
                 })->toArray(),
             ];
         })->toArray());
+
+        $buildingLat = $building->latitude ? (float) $building->latitude : null;
+        $buildingLng = $building->longitude ? (float) $building->longitude : null;
+
+        return view('tour.show', compact('building', 'locationsJson', 'buildingLat', 'buildingLng'));
     }
 }
