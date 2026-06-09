@@ -4,12 +4,12 @@
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-sm pb-sm">
         <div>
             <h2 class="text-headline-lg font-headline-lg text-primary tracking-tight">Buildings</h2>
-            <p class="text-body-md font-body-md text-secondary">Manage campus buildings and areas.</p>
+            <p class="text-body-md font-body-md text-secondary">Kelola gedung dan area kampus</p>
         </div>
         <a href="{{ route('admin.buildings.create') }}"
             class="flex items-center gap-sm px-lg py-sm bg-primary text-on-primary rounded-lg hover:opacity-90 active:scale-[0.98] transition-all">
             <span class="material-symbols-outlined text-[18px]" data-icon="add">add</span>
-            <span class="text-label-md font-label-md">Add Building</span>
+            <span class="text-label-md font-label-md">Tambah Gedung</span>
         </a>
     </div>
 
@@ -20,8 +20,8 @@
                 <thead>
                     <tr class="bg-surface-container-low border-b border-outline-variant">
                         <th class="px-lg py-md text-label-md font-label-md text-secondary uppercase tracking-wider">Thumbnail</th>
-                        <th class="px-lg py-md text-label-md font-label-md text-secondary uppercase tracking-wider">Name</th>
-                        <th class="px-lg py-md text-label-md font-label-md text-secondary uppercase tracking-wider">Locations</th>
+                        <th class="px-lg py-md text-label-md font-label-md text-secondary uppercase tracking-wider">Nama</th>
+                        <th class="px-lg py-md text-label-md font-label-md text-secondary uppercase tracking-wider">Lokasi</th>
                         <th class="px-lg py-md text-label-md font-label-md text-secondary uppercase tracking-wider">Status</th>
                         <th class="px-lg py-md text-label-md font-label-md text-secondary uppercase tracking-wider text-right">Actions</th>
                     </tr>

@@ -72,6 +72,7 @@
                         class="flex items-center gap-sm px-lg py-sm bg-primary text-on-primary rounded-lg hover:opacity-90 active:scale-[0.98] transition-all">
                         <span class="text-label-md font-label-md">{{ isset($building) ? 'Update' : 'Create' }}</span>
                     </button>
+                 
                     <a href="{{ route('admin.buildings.index') }}"
                         class="px-lg py-sm bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 text-label-md transition-colors">
                         Cancel
