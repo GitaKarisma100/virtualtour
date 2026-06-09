@@ -16,6 +16,8 @@ class Location extends Model
         'hfov',
         'yaw',
         'pitch',
+        'map_x',
+        'map_y',
         'sort_order',
         'is_active',
     ];
@@ -25,6 +27,8 @@ class Location extends Model
         'hfov' => 'float',
         'yaw' => 'float',
         'pitch' => 'float',
+        'map_x' => 'float',
+        'map_y' => 'float',
         'sort_order' => 'integer',
     ];
 

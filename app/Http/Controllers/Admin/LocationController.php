@@ -13,6 +13,7 @@ class LocationController extends Controller
     public function index(Building $building)
     {
         $locations = $building->locations()->paginate(50);
+
         return view('admin.locations.index', compact('building', 'locations'));
     }
 
@@ -30,17 +31,21 @@ class LocationController extends Controller
             'hfov' => 'nullable|numeric|min:1|max:360',
             'yaw' => 'nullable|numeric|min:-180|max:180',
             'pitch' => 'nullable|numeric|min:-90|max:90',
+            'map_x' => 'nullable|numeric|min:-90|max:90',
+            'map_y' => 'nullable|numeric|min:-180|max:180',
             'sort_order' => 'nullable|integer|min:0',
             'is_active' => 'nullable|boolean',
         ]);
 
-        $location = new Location();
+        $location = new Location;
         $location->building_id = $building->id;
         $location->name = $validated['name'];
         $location->description = $validated['description'] ?? null;
         $location->hfov = $validated['hfov'] ?? 90;
         $location->yaw = $validated['yaw'] ?? 0;
         $location->pitch = $validated['pitch'] ?? 0;
+        $location->map_x = $validated['map_x'] ?? null;
+        $location->map_y = $validated['map_y'] ?? null;
         $location->sort_order = $validated['sort_order'] ?? 0;
         $location->is_active = $request->boolean('is_active', true);
 
@@ -67,6 +72,8 @@ class LocationController extends Controller
             'hfov' => 'nullable|numeric|min:1|max:360',
             'yaw' => 'nullable|numeric|min:-180|max:180',
             'pitch' => 'nullable|numeric|min:-90|max:90',
+            'map_x' => 'nullable|numeric|min:-90|max:90',
+            'map_y' => 'nullable|numeric|min:-180|max:180',
             'sort_order' => 'nullable|integer|min:0',
             'is_active' => 'nullable|boolean',
         ]);
@@ -76,6 +83,8 @@ class LocationController extends Controller
         $location->hfov = $validated['hfov'] ?? 90;
         $location->yaw = $validated['yaw'] ?? 0;
         $location->pitch = $validated['pitch'] ?? 0;
+        $location->map_x = $validated['map_x'] ?? null;
+        $location->map_y = $validated['map_y'] ?? null;
         $location->sort_order = $validated['sort_order'] ?? 0;
         $location->is_active = $request->boolean('is_active', true);
 

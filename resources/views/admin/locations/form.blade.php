@@ -76,6 +76,23 @@
                     </div>
                 </div>
 
+                <hr class="border-outline-variant">
+
+                <p class="text-label-md font-label-md text-primary mb-base">Map Position (Latitude / Longitude)</p>
+                <p class="text-label-md text-secondary mb-sm">Koordinat lokasi untuk ditampilkan di peta Leaflet.</p>
+                <div class="grid grid-cols-2 gap-md max-w-xs">
+                    <div>
+                        <label class="text-label-md font-label-md text-primary mb-base block">Latitude</label>
+                        <input type="number" name="map_x" value="{{ old('map_x', $location->map_x ?? '') }}" step="any" min="-90" max="90"
+                            class="w-full px-md py-sm bg-surface-container-low border border-outline-variant focus:border-primary focus:ring-0 rounded-lg text-body-md transition-all outline-none" placeholder="-8.2186" />
+                    </div>
+                    <div>
+                        <label class="text-label-md font-label-md text-primary mb-base block">Longitude</label>
+                        <input type="number" name="map_y" value="{{ old('map_y', $location->map_y ?? '') }}" step="any" min="-180" max="180"
+                            class="w-full px-md py-sm bg-surface-container-low border border-outline-variant focus:border-primary focus:ring-0 rounded-lg text-body-md transition-all outline-none" placeholder="114.3667" />
+                    </div>
+                </div>
+
                 <div class="flex items-center gap-lg flex-wrap">
                     <div>
                         <label class="text-label-md font-label-md text-primary mb-base block">Sort Order</label>
