@@ -88,8 +88,9 @@
                     </div>
                     <div>
                         <label class="text-label-md font-label-md text-primary mb-base block">URL</label>
-                        <input type="url" name="url" value="{{ old('url', $hotspot->url ?? '') }}"
+                        <input type="url" name="url" id="hotspot-url" value="{{ old('url', $hotspot->url ?? '') }}"
                             class="w-full px-md py-sm bg-surface-container-low border border-outline-variant focus:border-primary focus:ring-0 rounded-lg text-body-md transition-all outline-none" />
+                        <div id="yt-preview" class="mt-md hidden"></div>
                     </div>
                 </div>
 
@@ -115,9 +116,55 @@
     </div>
 
     <script>
-        document.getElementById('type').addEventListener('change', function() {
+        const typeEl = document.getElementById('type');
+        const urlEl  = document.getElementById('hotspot-url');
+        const ytPrev = document.getElementById('yt-preview');
+
+        typeEl.addEventListener('change', function() {
             document.getElementById('target-field').classList.toggle('hidden', this.value !== 'navigation');
             document.getElementById('info-fields').classList.toggle('hidden', this.value !== 'info');
+            updateYtPreview();
         });
+
+        function getYtId(url) {
+            if (!url) return null;
+            const patterns = [
+                /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/shorts\/)([a-zA-Z0-9_-]{11})/,
+                /^([a-zA-Z0-9_-]{11})$/
+            ];
+            for (const p of patterns) {
+                const m = url.match(p);
+                if (m) return m[1];
+            }
+            return null;
+        }
+
+        function updateYtPreview() {
+            if (typeEl.value !== 'info') {
+                ytPrev.classList.add('hidden');
+                ytPrev.innerHTML = '';
+                return;
+            }
+            const id = getYtId(urlEl.value.trim());
+            if (id) {
+                ytPrev.innerHTML = `
+                    <p class="text-label-md text-secondary mb-sm">YouTube Preview</p>
+                    <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:8px;background:#000">
+                        <iframe src="https://www.youtube.com/embed/${id}" frameborder="0"
+                            allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture"
+                            allowfullscreen
+                            style="position:absolute;top:0;left:0;width:100%;height:100%">
+                        </iframe>
+                    </div>
+                `;
+                ytPrev.classList.remove('hidden');
+            } else {
+                ytPrev.classList.add('hidden');
+                ytPrev.innerHTML = '';
+            }
+        }
+
+        urlEl.addEventListener('input', updateYtPreview);
+        updateYtPreview();
     </script>
 @endsection
