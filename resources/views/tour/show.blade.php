@@ -158,6 +158,15 @@
   #sidebar-body hr { border: none; border-top: 1px solid rgba(255,255,255,0.06); margin: 16px 0; }
   #sidebar-body p { font-size: 15px; color: rgba(255,255,255,0.55); line-height: 1.7; margin: 0; }
   #sidebar-thumb { width: 100%; border-radius: 8px; margin-bottom: 12px; display: none; }
+  #sidebar-yt {
+    width: 100%; margin-top: 16px;
+    position: relative; padding-bottom: 56.25%; height: 0;
+    overflow: hidden; border-radius: 8px; background: #000;
+  }
+  #sidebar-yt iframe {
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 100%; border: 0;
+  }
   #sidebar-link {
     display: inline-flex; align-items: center; gap: 6px; margin-top: 16px;
     padding: 8px 20px; background: rgba(79, 195, 247, 0.15); color: #4fc3f7;
@@ -264,6 +273,7 @@
     <h3 id="sidebar-title"></h3>
     <hr>
     <p id="sidebar-desc"></p>
+    <div id="sidebar-yt" class="hidden"></div>
     <a id="sidebar-link" href="#" target="_blank" rel="noopener">Buka Link</a>
   </div>
 </div>
@@ -278,6 +288,19 @@
 </script>
 
 <script>
+function getYtId(url) {
+  if (!url) return null;
+  const patterns = [
+    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/shorts\/)([a-zA-Z0-9_-]{11})/,
+    /^([a-zA-Z0-9_-]{11})$/
+  ];
+  for (const p of patterns) {
+    const m = url.match(p);
+    if (m) return m[1];
+  }
+  return null;
+}
+
 function hideInfoPopup() {
   document.getElementById('sidebar').classList.remove('open');
 }
@@ -289,8 +312,18 @@ function showInfoPopup(label, desc, thumb, url) {
   document.getElementById('sidebar-title').textContent = label;
   document.getElementById('sidebar-desc').textContent = desc || '';
   const link = document.getElementById('sidebar-link');
-  if (url) { link.href = url; link.style.display = 'inline-flex'; }
-  else { link.style.display = 'none'; }
+  const yt   = document.getElementById('sidebar-yt');
+  const ytId = getYtId(url);
+  if (ytId) {
+    link.style.display = 'none';
+    yt.innerHTML = `<iframe src="https://www.youtube.com/embed/${ytId}" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen></iframe>`;
+    yt.classList.remove('hidden');
+  } else {
+    yt.classList.add('hidden');
+    yt.innerHTML = '';
+    if (url) { link.href = url; link.style.display = 'inline-flex'; }
+    else { link.style.display = 'none'; }
+  }
   document.getElementById('sidebar').classList.add('open');
 }
 </script>

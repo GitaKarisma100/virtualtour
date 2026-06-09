@@ -1,9 +1,20 @@
 <?php
 
 use App\Http\Controllers\TourController;
+use App\Models\Building;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', [TourController::class, 'index'])->name('tour.index');
+Route::get('/', function () {
+    $firstBuilding = Building::where('is_active', true)
+        ->orderBy('sort_order')
+        ->first();
+
+    return view('welcome', [
+        'firstTourUrl' => $firstBuilding ? route('tour.show', $firstBuilding) : null,
+    ]);
+})->name('home');
+
+Route::get('/explore', [TourController::class, 'index'])->name('tour.index');
 Route::get('/tour/{building}', [TourController::class, 'show'])->name('tour.show');
 
 Route::middleware([
