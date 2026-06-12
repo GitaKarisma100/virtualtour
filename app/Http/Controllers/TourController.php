@@ -94,9 +94,6 @@ class TourController extends Controller
             ];
         })->toArray());
 
-        $buildingLat = $building->latitude ? (float) $building->latitude : null;
-        $buildingLng = $building->longitude ? (float) $building->longitude : null;
-
-        return view('tour.show', compact('building', 'locationsJson', 'buildingLat', 'buildingLng'));
+        return view('tour.show', compact('building', 'locationsJson'));
     }
 }
