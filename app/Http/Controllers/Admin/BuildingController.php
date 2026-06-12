@@ -34,18 +34,14 @@ class BuildingController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'latitude' => 'nullable|numeric|min:-90|max:90',
-            'longitude' => 'nullable|numeric|min:-180|max:180',
             'thumbnail' => 'nullable|image|max:10240',
             'sort_order' => 'nullable|integer|min:0',
-            'is_active' => 'nullable|boolean',
+            'is_active' => 'nullable|boolean', 
         ]);
 
-        $building = new Building;
+        $building = new Building();
         $building->name = $validated['name'];
         $building->description = $validated['description'] ?? null;
-        $building->latitude = $validated['latitude'] ?? null;
-        $building->longitude = $validated['longitude'] ?? null;
         $building->sort_order = $validated['sort_order'] ?? 0;
         $building->is_active = $request->boolean('is_active', true);
 
@@ -68,8 +64,6 @@ class BuildingController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'latitude' => 'nullable|numeric|min:-90|max:90',
-            'longitude' => 'nullable|numeric|min:-180|max:180',
             'thumbnail' => 'nullable|image|max:2048',
             'thumbnail' => 'nullable|image|max:10240',
             'sort_order' => 'nullable|integer|min:0',
@@ -78,8 +72,6 @@ class BuildingController extends Controller
 
         $building->name = $validated['name'];
         $building->description = $validated['description'] ?? null;
-        $building->latitude = $validated['latitude'] ?? null;
-        $building->longitude = $validated['longitude'] ?? null;
         $building->sort_order = $validated['sort_order'] ?? 0;
         $building->is_active = $request->boolean('is_active', true);
 
