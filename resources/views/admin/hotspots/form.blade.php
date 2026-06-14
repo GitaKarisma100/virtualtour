@@ -19,7 +19,7 @@
                 @method('PUT')
             @endif
 
-            <div class="space-y-lg max-w-xl">
+            <div class="space-y-lg">
                 <div>
                     <label class="text-label-md font-label-md text-primary mb-base block">Type *</label>
                     <select name="type" id="type"
@@ -58,6 +58,16 @@
                             required />
                     </div>
                 </div>
+
+                <hr class="border-outline-variant">
+
+                <div id="preview-section" class="{{ isset($location) && $location->image_path ? '' : 'hidden' }}">
+                    <label class="text-label-md font-label-md text-primary mb-base block">360° Preview — drag to position hotspot marker</label>
+                    <div id="preview-container" class="w-full rounded-lg overflow-hidden bg-surface-container-low border border-outline-variant" style="height: 360px;"></div>
+                    <p class="text-label-md text-secondary mt-xs">Drag to rotate &bull; Scroll to zoom &bull; Yaw/Pitch update automatically</p>
+                </div>
+
+                <hr class="border-outline-variant">
 
                 <div id="target-field" class="{{ old('type', $hotspot->type ?? '') !== 'navigation' ? 'hidden' : '' }}">
                     <label class="text-label-md font-label-md text-primary mb-base block">Target Location</label>
@@ -167,4 +177,78 @@
         urlEl.addEventListener('input', updateYtPreview);
         updateYtPreview();
     </script>
+
+@push('styles')
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/core@5.4.4/index.min.css">
+<style>
+  #preview-container .psv-container { border-radius: 0.5rem; }
+  #preview-container .psv-loader-container { background: transparent; }
+</style>
+@endpush
+
+@push('scripts')
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "@photo-sphere-viewer/core": "https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/core@5.4.4/index.module.js"
+  }
+}
+</script>
+<script type="module">
+import { Viewer } from '@photo-sphere-viewer/core';
+
+let viewer = null;
+const container = document.getElementById('preview-container');
+const previewSection = document.getElementById('preview-section');
+
+function toDeg(rad) {
+  return rad * 180 / Math.PI;
+}
+
+function initPreview(imageSrc) {
+  if (viewer) {
+    viewer.destroy();
+    viewer = null;
+  }
+
+  const yaw = parseFloat(document.querySelector('[name="yaw"]').value) || 0;
+  const pitch = parseFloat(document.querySelector('[name="pitch"]').value) || 0;
+
+  viewer = new Viewer({
+    container,
+    panorama: imageSrc,
+    defaultYaw: yaw + 'deg',
+    defaultPitch: pitch + 'deg',
+    defaultZoomLvl: 0,
+    minFov: 30,
+    maxFov: 120,
+    navbar: false,
+    caption: '',
+  });
+
+  viewer.addEventListener('position-change', (e) => {
+    document.querySelector('[name="yaw"]').value = toDeg(e.yaw).toFixed(1);
+    document.querySelector('[name="pitch"]').value = toDeg(e.pitch).toFixed(1);
+  });
+}
+
+['yaw', 'pitch'].forEach(name => {
+  const input = document.querySelector(`[name="${name}"]`);
+  if (input) {
+    input.addEventListener('input', () => {
+      if (!viewer) return;
+      const yaw = parseFloat(document.querySelector('[name="yaw"]').value) || 0;
+      const pitch = parseFloat(document.querySelector('[name="pitch"]').value) || 0;
+      viewer.rotate({ yaw: yaw + 'deg', pitch: pitch + 'deg' });
+    });
+  }
+});
+
+@if(isset($location) && $location->image_path)
+  initPreview('{{ asset("storage/".$location->image_path) }}');
+@endif
+</script>
+@endpush
+
 @endsection

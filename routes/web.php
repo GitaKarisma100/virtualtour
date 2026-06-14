@@ -12,8 +12,14 @@ Route::get('/', function () {
         ->orderBy('sort_order')
         ->first();
 
+    $buildings = Building::where('is_active', true)
+        ->orderBy('sort_order')
+        ->take(4)
+        ->get();
+
     return view('welcome', [
         'firstTourUrl' => $firstBuilding ? route('tour.show', $firstBuilding) : null,
+        'buildings' => $buildings,
     ]);
 })->name('home');
 
