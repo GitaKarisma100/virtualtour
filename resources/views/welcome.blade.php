@@ -357,79 +357,35 @@
                 </a>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-4 grid-rows-2 gap-gutter h-[800px] md:h-[600px]">
-                <!-- Main Building -->
-                <div class="md:col-span-2 md:row-span-2 group relative overflow-hidden rounded-2xl cursor-pointer">
-                    <img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                        data-alt="An expansive view of the main administrative building of a modern college campus, featuring large glass facades and structural steel. The sky is a clear sunset orange, casting long shadows and a warm glow over the paved walkways and manicured lawns. The image emphasizes professional architecture and a welcoming, prestigious atmosphere, following a clean corporate academic aesthetic with high-end lighting."
-                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZGAnfgAqP-Zy26Y65jZ8oGMqXWMfgsHm3M36tVw5noTMlaU4fFqxUUAwRsbLX9Be77Xx6pZ9JsE97oJCsGagtjkniBoM_Fk0zq-xAWcSLGGA2aw6tm-WkH_pFVUlERQjUKrqirnYvXBByk9j-dNF5CqB5bvMh38aNC2XGPv5e-2ZydQ_CuNIUgNlqlZm_pxaStG5wgFyV7ijuRxIUx5vijKTPOPyWgaUjZgYsu2s7UxSl9yILko9FIaeNBk4cAq7TvSVr3yLtOpw" />
-                    <div
-                        class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity">
-                    </div>
-                    <div class="absolute bottom-6 left-6 text-white">
-                        <span
-                            class="bg-vibrant-gold text-primary text-[10px] font-bold px-2 py-0.5 rounded mb-2 inline-block">UTAMA</span>
-                        <h4 class="font-headline-sm text-2xl">Gedung Direktorat</h4>
-                        <p class="text-white/80 text-sm opacity-0 group-hover:opacity-100 transition-opacity">Pusat
-                            layanan mahasiswa dan administrasi terpadu.</p>
-                    </div>
-                    <div
-                        class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                        <div
-                            class="bg-white/20 backdrop-blur-md px-6 py-3 rounded-full border border-white/30 text-white font-button">
-                            Lihat 360°</div>
-                    </div>
-                </div>
-                <!-- Workshop -->
-                <div class="md:col-span-2 group relative overflow-hidden rounded-2xl cursor-pointer">
-                    <img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                        data-alt="A wide, brightly lit interior of a high-tech engineering workshop at a polytechnic university. Students in safety gear are working with industrial machinery and robotic arms. The space is filled with clean white walls and blue structural accents. The lighting is cool and professional, creating a clean, productive laboratory environment. The image communicates technological advancement and hands-on vocational excellence."
-                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuB8nSXtQN-M28qMpli6G_Wsj34XTz9E10VK6s-LIcPn_wGNQ_QhSM1UzU3s4cFsMvn8wvyJL_WXhEEt_lEZT7QcimSSRTnweOqS3GEsqjue5a3y69Q3H2jYlv1x9uUDtRdbMQJQO6X6PBSeZAHEW-CfHWRDJOPYMV2zv1OZJZv-mi_Lc3wH3sv1EjvewOeV6D4S6d6C-YZZIGaUg3o-NUVuJEP1omWSPGv0XKto8zAM9tVmKnlfeTULrA1BWR-ao7OCP-A0pdW4PIs" />
-                    <div
-                        class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60">
-                    </div>
-                    <div class="absolute bottom-6 left-6 text-white">
-                        <h4 class="font-headline-sm text-xl">Workshop Teknik</h4>
-                        <p class="text-white/80 text-xs">Fasilitas praktek manufaktur dan mesin modern.</p>
-                    </div>
-                    <div
-                        class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                        <div
-                            class="bg-white/20 backdrop-blur-md px-4 py-2 rounded-full border border-white/30 text-white text-xs font-button">
-                            Lihat 360°</div>
-                    </div>
-                </div>
-                <!-- Lab -->
-                <div class="group relative overflow-hidden rounded-2xl cursor-pointer">
-                    <img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                        data-alt="A sleek and modern computer laboratory with rows of high-end workstations and ergonomic chairs. The room features cool-toned ambient lighting and a futuristic aesthetic, with blue LED accents along the walls. The overall mood is focused and technologically advanced, suitable for a premier IT and engineering institute. The photography is sharp and professional, highlighting a high-performance learning space."
-                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDw7sp9Gs19nt859ASmRqHv1oV10gJ06urSvRd29OvtTGyVLxOoHZzEWUTo8L4sU4owuCD22UxXMxGOZy5PN9AO1drZMP1FQASYto1xvXFNlUMFdbWXMS63M7_qLYo7uh5sdDTbjm2VYGE8HzyhM5WnFaW6pmWNADlyoSqnXRZLLFFQ64WblzjGSNemHl0NUy8y9SOvCF11LWJX_bsvPYPSZKYGOk2p62f1NaStuN4mbRvO8HuzKUdbvKLAPCdMSN6GZFdfo6H_aQY" />
-                    <div
-                        class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60">
-                    </div>
-                    <div class="absolute bottom-4 left-4 text-white">
-                        <h4 class="font-bold text-sm">Lab Komputer</h4>
-                    </div>
-                    <div
-                        class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                        <span class="material-symbols-outlined text-white text-3xl">360</span>
-                    </div>
-                </div>
-                <!-- Library/Others -->
-                <div class="group relative overflow-hidden rounded-2xl cursor-pointer">
-                    <img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                        data-alt="A modern university library with tall bookshelves, cozy study nooks, and large windows overlooking a green campus. The lighting is soft and warm, creating a quiet, intellectual atmosphere. The design is contemporary with a mix of wood and metal materials. The image evokes a sense of peace and academic dedication, presented in a clean, high-end photographic style."
-                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDB12wkUMxMJJrH2fTyItvXBUz5C1bxD4x1UocM-ijXEAkPw0qLqlqaHvgFKXiiF2TrisweWMt1oCRmDfKgHxVAB-hSI44XgDLuLKy2WYMJ1-H8VcqbPsTrGHbsfT6oua34mD-83714J8DWxEqvVRLzopmzYz9lH8Qs0s8K3FLgU_Kgw7aRBdyVeij0mswTL0yomr7wyB-nF4XF7VxEUQZVSsJe3s2ZqurZERc5rVu4i2iEMvovsPiAYye5Uuz0cu0nBcqiaBLvYOw" />
-                    <div
-                        class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60">
-                    </div>
-                    <div class="absolute bottom-4 left-4 text-white">
-                        <h4 class="font-bold text-sm">Perpustakaan</h4>
-                    </div>
-                    <div
-                        class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                        <span class="material-symbols-outlined text-white text-3xl">360</span>
-                    </div>
-                </div>
+                @foreach($buildings as $i => $building)
+                    @php
+                        $img = $building->thumbnail_path ? asset('storage/'.$building->thumbnail_path) : null;
+                        $isLarge = $i === 0;
+                        $isMedium = $i === 1;
+                        $colSpan = $isLarge ? 'md:col-span-2' : ($isMedium ? 'md:col-span-2' : '');
+                        $rowSpan = $isLarge ? 'md:row-span-2' : '';
+                    @endphp
+                    <a href="{{ route('tour.show', $building) }}"
+                       class="{{ $colSpan }} {{ $rowSpan }} group relative overflow-hidden rounded-2xl cursor-pointer">
+                        @if($img)
+                            <img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" src="{{ $img }}" alt="{{ $building->name }}" />
+                        @else
+                            <div class="w-full h-full bg-surface-container-high flex items-center justify-center">
+                                <span class="material-symbols-outlined text-6xl text-outline">image</span>
+                            </div>
+                        @endif
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity"></div>
+                        <div class="absolute bottom-6 left-6 text-white">
+                            @if($isLarge)
+                                <span class="bg-vibrant-gold text-primary text-[10px] font-bold px-2 py-0.5 rounded mb-2 inline-block">POPULER</span>
+                            @endif
+                            <h4 class="font-headline-sm {{ $isLarge ? 'text-2xl' : 'text-xl' }}">{{ $building->name }}</h4>
+                        </div>
+                        <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div class="bg-white/20 backdrop-blur-md px-6 py-3 rounded-full border border-white/30 text-white font-button">Lihat 360°</div>
+                        </div>
+                    </a>
+                @endforeach
             </div>
         </div>
     </section>
