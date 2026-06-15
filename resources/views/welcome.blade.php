@@ -227,7 +227,7 @@
                 </span>
                 <h1
                     class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-white mb-6">
-                    Eksplorasi Kampus Jinggo Tanpa Batas
+                    Siap Menjelajahi Poliwangi?
                 </h1>
                 <p class="font-body-lg text-body-lg text-white/90 mb-10 leading-relaxed">
                     Nikmati pengalaman mendalam menjelajahi setiap sudut Politeknik Negeri Banyuwangi melalui teknologi
