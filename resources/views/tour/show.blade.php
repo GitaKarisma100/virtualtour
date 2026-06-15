@@ -1023,13 +1023,13 @@
 
                 this.prevBtn.addEventListener('click', () => {
                     if (currentIdx > 0) {
-                        loadLocation(currentIdx - 1);
+                        animatedLoadLocation(currentIdx - 1, 'prev');
                     }
                 });
 
                 this.nextBtn.addEventListener('click', () => {
                     if (currentIdx < LOCATIONS.length - 1) {
-                        loadLocation(currentIdx + 1);
+                        animatedLoadLocation(currentIdx + 1, 'next');
                     }
                 });
 
@@ -1129,6 +1129,163 @@
         }
 
         let groundNav = null;
+        let isAnimating = false;
+        let fadeOverlay = null;
+
+        function createFadeOverlay() {
+            if (!fadeOverlay) {
+                fadeOverlay = document.createElement('div');
+                fadeOverlay.id = 'fade-overlay';
+                fadeOverlay.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0, 0, 0, 0);
+                    pointer-events: none;
+                    z-index: 5000;
+                    transition: background 0.4s ease-in-out;
+                `;
+                document.body.appendChild(fadeOverlay);
+            }
+            return fadeOverlay;
+        }
+
+        async function animatedLoadLocation(idx, direction, fromYaw, fromPitch) {
+            if (isAnimating || idx < 0 || idx >= LOCATIONS.length) return;
+            isAnimating = true;
+
+            const fromLoc = LOCATIONS[currentIdx];
+            const toLoc = LOCATIONS[idx];
+            const overlay = createFadeOverlay();
+
+            const zoomDuration = 600;
+            const fadeDuration = 400;
+            const startZoom = viewer.getZoomLevel();
+            const maxZoom = 85;
+
+            try {
+                // ──── PHASE 1: ROTATE 180° jika PREV ────
+                if (direction === 'prev') {
+                    const startPos = viewer.getPosition();
+                    const targetYaw = startPos.yaw + Math.PI;
+                    await new Promise((resolve) => {
+                        const startTime = performance.now();
+                        const rotDuration = 400;
+                        const animate = (currentTime) => {
+                            const elapsed = currentTime - startTime;
+                            const progress = Math.min(elapsed / rotDuration, 1);
+                            const eased = progress < 0.5
+                                ? 2 * progress * progress
+                                : -1 + (4 - 2 * progress) * progress;
+                            viewer.rotate({
+                                yaw: (startPos.yaw + (targetYaw - startPos.yaw) * eased) + 'rad',
+                                pitch: startPos.pitch + 'rad'
+                            });
+                            if (progress < 1) {
+                                requestAnimationFrame(animate);
+                            } else {
+                                resolve();
+                            }
+                        };
+                        requestAnimationFrame(animate);
+                    });
+                }
+
+                // ──── PHASE 2: ZOOM IN + FADE OUT ────
+                await new Promise((resolve) => {
+                    const startTime = performance.now();
+                    const animate = (currentTime) => {
+                        const elapsed = currentTime - startTime;
+                        const progress = Math.min(elapsed / zoomDuration, 1);
+                        const eased = progress < 0.5
+                            ? 2 * progress * progress
+                            : -1 + (4 - 2 * progress) * progress;
+
+                        const newZoom = startZoom + (maxZoom - startZoom) * eased;
+                        viewer.zoom(newZoom);
+
+                        if (progress >= 0.6) {
+                            overlay.style.background = `rgba(0, 0, 0, ${(progress - 0.6) / 0.4})`;
+                        }
+
+                        if (progress < 1) {
+                            requestAnimationFrame(animate);
+                        } else {
+                            overlay.style.background = 'rgba(0, 0, 0, 1)';
+                            resolve();
+                        }
+                    };
+                    requestAnimationFrame(animate);
+                });
+
+                // ──── PHASE 3: LOAD PANORAMA BARU ────
+                currentIdx = idx;
+                document.getElementById('loc-name').textContent = toLoc.name;
+                document.getElementById('loc-desc').textContent = toLoc.description || '';
+                updateThumbnails();
+                updateMap(idx);
+
+                await viewer.setPanorama(toLoc.image);
+                if (fromYaw !== undefined) {
+                    viewer.rotate({
+                        yaw: (fromYaw || 0) + 'deg',
+                        pitch: (fromPitch || 0) + 'deg'
+                    });
+                } else {
+                    viewer.rotate({
+                        yaw: (toLoc.yaw || 0) + 'deg',
+                        pitch: (toLoc.pitch || 0) + 'deg'
+                    });
+                }
+
+                clearMarkers();
+                (toLoc.hotspots || []).forEach(h => {
+                    if (h.type === 'info' || h.type === 'external_link') {
+                        addMarkerMesh(h.yaw, h.pitch ?? -15, makeInfoTexture(h.label), 1.1, {
+                            type: 'info',
+                            label: h.label,
+                            description: h.description,
+                            thumbnail: h.thumbnail,
+                            url: h.url
+                        });
+                    }
+                });
+
+                // ──── PHASE 4: ZOOM OUT + FADE IN ────
+                await new Promise((resolve) => {
+                    const startTime = performance.now();
+                    const animate = (currentTime) => {
+                        const elapsed = currentTime - startTime;
+                        const progress = Math.min(elapsed / zoomDuration, 1);
+                        const eased = progress < 0.5
+                            ? 2 * progress * progress
+                            : -1 + (4 - 2 * progress) * progress;
+
+                        const newZoom = maxZoom - (maxZoom - startZoom) * eased;
+                        viewer.zoom(newZoom);
+
+                        overlay.style.background = `rgba(0, 0, 0, ${1 - progress})`;
+
+                        if (progress < 1) {
+                            requestAnimationFrame(animate);
+                        } else {
+                            overlay.style.background = 'rgba(0, 0, 0, 0)';
+                            resolve();
+                        }
+                    };
+                    requestAnimationFrame(animate);
+                });
+
+                if (groundNav) {
+                    groundNav.updateNavigation();
+                }
+
+            } finally {
+                isAnimating = false;
+            }
+        }
 
         function startAnim() {
             const loop = (t) => {
@@ -1164,11 +1321,12 @@
                 if (!hits.length) return;
                 const data = hits[0].object.userData;
                 if (data.type === 'navigation') {
-                    loadLocation(data.targetIdx, data.yaw, data.pitch);
+                    const dir = data.targetIdx > currentIdx ? 'next' : 'prev';
+                    animatedLoadLocation(data.targetIdx, dir, data.yaw, data.pitch);
                 } else if (data.type === 'prev') {
-                    loadLocation(currentIdx - 1, data.yaw, data.pitch);
+                    animatedLoadLocation(currentIdx - 1, 'prev', data.yaw, data.pitch);
                 } else if (data.type === 'next') {
-                    loadLocation(currentIdx + 1, data.yaw, data.pitch);
+                    animatedLoadLocation(currentIdx + 1, 'next', data.yaw, data.pitch);
                 } else if (data.type === 'info') {
                     showInfoPopup(data.label, data.description, data.thumbnail, data.url);
                 } else if (data.type === 'external_link' && data.url) {
@@ -1203,7 +1361,12 @@
 
                 item.appendChild(img);
                 item.appendChild(label);
-                item.addEventListener('click', () => loadLocation(i));
+                item.addEventListener('click', () => {
+                    if (i !== currentIdx) {
+                        const dir = i > currentIdx ? 'next' : 'prev';
+                        animatedLoadLocation(i, dir);
+                    }
+                });
                 strip.appendChild(item);
 
                 if (i === currentIdx) {
@@ -1422,7 +1585,10 @@
                     className: 'mm-tooltip'
                 });
                 marker.on('click', () => {
-                    if (i !== currentIdx) loadLocation(i);
+                    if (i !== currentIdx) {
+                        const dir = i > currentIdx ? 'next' : 'prev';
+                        animatedLoadLocation(i, dir);
+                    }
                 });
                 mmMarkers.push(marker);
             });
