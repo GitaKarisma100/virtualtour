@@ -487,6 +487,68 @@
         #sidebar-link:hover {
             background: rgba(79, 195, 247, 0.25);
         }
+
+        /* Ground Navigation Wrapper */
+        #ground-nav-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 998;
+        }
+
+        /* Individual navigation buttons */
+        .ground-nav-btn {
+            position: fixed;
+            pointer-events: auto;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 50%;
+            width: 80px;
+            height: 44px;
+            color: #fff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+            opacity: 0;
+            visibility: hidden;
+            transform: scale(0.8) scaleY(0);
+        }
+
+        .ground-nav-btn:hover {
+            background: rgba(0, 0, 0, 0.8);
+            border-color: rgba(255, 255, 255, 0.4);
+            transform: scale(1.1) scaleY(1);
+        }
+
+        .ground-nav-btn:active {
+            transform: scale(0.95) scaleY(1);
+        }
+
+        .ground-nav-btn svg {
+            width: 24px;
+            height: 24px;
+            flex-shrink: 0;
+        }
+
+        /* State: VISIBLE di ground */
+        .ground-nav-btn.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1) scaleY(1);
+        }
+
+        /* Disable state - saat di ujung (first/last location) */
+        .ground-nav-btn.disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
     </style>
 </head>
 
@@ -497,6 +559,41 @@
         <p>Memuat virtual tour…</p>
     </div>
     <div id="viewer"></div>
+
+    <!-- Ground Navigation Container -->
+    <div id="ground-nav-container" class="ground-nav-wrapper">
+        <button id="ground-nav-next" class="ground-nav-btn ground-nav-btn-next" title="Lokasi Selanjutnya">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z" />
+            </svg>
+        </button>
+
+        <button id="ground-nav-prev" class="ground-nav-btn ground-nav-btn-prev" title="Lokasi Sebelumnya">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z" />
+            </svg>
+        </button>
+    </div>
+
+    <!-- Old nav arrows removed - replaced by ground navigation -->
+    <!--
+    <button id="nav-prev" class="nav-arrow hidden" title="Lokasi Sebelumnya">
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="50" r="48" fill="rgba(255,255,255,0.95)" stroke="rgba(255,255,255,0.7)" stroke-width="1.5"/>
+            <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(100,100,100,0.5)" stroke-width="1.5"/>
+            <circle cx="50" cy="50" r="32" fill="none" stroke="rgba(100,100,100,0.5)" stroke-width="1.5"/>
+            <polyline points="30,50 50,30 70,50" fill="none" stroke="rgba(40,40,40,0.9)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+    </button>
+    <button id="nav-next" class="nav-arrow hidden" title="Lokasi Selanjutnya">
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="50" r="48" fill="rgba(255,255,255,0.95)" stroke="rgba(255,255,255,0.7)" stroke-width="1.5"/>
+            <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(100,100,100,0.5)" stroke-width="1.5"/>
+            <circle cx="50" cy="50" r="32" fill="none" stroke="rgba(100,100,100,0.5)" stroke-width="1.5"/>
+            <polyline points="30,50 50,70 70,50" fill="none" stroke="rgba(40,40,40,0.9)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+    </button>
+    -->
 
     <div id="map-container">
         <div id="leaflet-map"></div>
@@ -893,8 +990,145 @@
 
         const arrowTex = makeArrowTexture();
         const linkTex = makeLinkTexture();
-        const prevTex = makePrevTexture();
-        const nextTex = makeNextTexture();
+
+        // ════════════════════════════════════════════════════════════════
+        // GROUND NAVIGATION - CURSOR TRACKING
+        // ════════════════════════════════════════════════════════════════
+
+        class GroundNavigation {
+            constructor(viewer, canvas) {
+                this.viewer = viewer;
+                this.canvas = canvas;
+                this.raycaster = new THREE.Raycaster();
+                this.mouse = new THREE.Vector2();
+                this.isOnGround = false;
+                this.groundThreshold = -15;
+
+                this.prevBtn = document.getElementById('ground-nav-prev');
+                this.nextBtn = document.getElementById('ground-nav-next');
+
+                this.lastMouseX = 0;
+                this.lastMouseY = 0;
+                this.animationFrameId = null;
+                this.positionUpdateTimer = null;
+                this.pendingX = 0;
+                this.pendingY = 0;
+
+                this.init();
+            }
+
+            init() {
+                document.addEventListener('mousemove', (e) => this.onMouseMove(e));
+                document.addEventListener('touchmove', (e) => this.onTouchMove(e), { passive: true });
+
+                this.prevBtn.addEventListener('click', () => {
+                    if (currentIdx > 0) {
+                        loadLocation(currentIdx - 1);
+                    }
+                });
+
+                this.nextBtn.addEventListener('click', () => {
+                    if (currentIdx < LOCATIONS.length - 1) {
+                        loadLocation(currentIdx + 1);
+                    }
+                });
+
+                this.startUpdateLoop();
+            }
+
+            onMouseMove(event) {
+                this.lastMouseX = event.clientX;
+                this.lastMouseY = event.clientY;
+                this.schedulePositionUpdate(event.clientX, event.clientY);
+            }
+
+            onTouchMove(event) {
+                if (event.touches.length > 0) {
+                    this.lastMouseX = event.touches[0].clientX;
+                    this.lastMouseY = event.touches[0].clientY;
+                    this.schedulePositionUpdate(event.touches[0].clientX, event.touches[0].clientY);
+                }
+            }
+
+            schedulePositionUpdate(x, y) {
+                if (this.prevBtn.matches(':hover') || this.nextBtn.matches(':hover')) return;
+                this.pendingX = x;
+                this.pendingY = y;
+                clearTimeout(this.positionUpdateTimer);
+                this.positionUpdateTimer = setTimeout(() => {
+                    this.updateButtonPosition(this.pendingX, this.pendingY);
+                }, 200);
+            }
+
+            updateButtonPosition(x, y) {
+                this.prevBtn.style.left = (x - 40) + 'px';
+                this.prevBtn.style.top = (y + 12) + 'px';
+
+                this.nextBtn.style.left = (x - 40) + 'px';
+                this.nextBtn.style.top = (y - 56) + 'px';
+            }
+
+            checkIfOnGround(mouseX, mouseY) {
+                const rect = this.canvas.getBoundingClientRect();
+
+                this.mouse.x = ((mouseX - rect.left) / rect.width) * 2 - 1;
+                this.mouse.y = -((mouseY - rect.top) / rect.height) * 2 + 1;
+
+                this.raycaster.setFromCamera(this.mouse, this.viewer.renderer.camera);
+
+                const sphere = new THREE.Sphere(new THREE.Vector3(0, 0, 0), 1);
+                const point = new THREE.Vector3();
+                this.raycaster.ray.intersectSphere(sphere, point);
+
+                if (point) {
+                    const spherical = new THREE.Spherical();
+                    spherical.setFromVector3(point);
+
+                    let pitch = 90 - THREE.MathUtils.radToDeg(spherical.phi);
+
+                    return pitch < this.groundThreshold;
+                }
+
+                return false;
+            }
+
+            updateNavigation() {
+                if (this.prevBtn.matches(':hover') || this.nextBtn.matches(':hover')) {
+                    return;
+                }
+
+                const isGroundNow = this.checkIfOnGround(this.lastMouseX, this.lastMouseY);
+
+                if (isGroundNow !== this.isOnGround) {
+                    this.isOnGround = isGroundNow;
+
+                    if (this.isOnGround) {
+                        this.prevBtn.classList.add('visible');
+                        this.nextBtn.classList.add('visible');
+                        this.updateButtonPosition(this.lastMouseX, this.lastMouseY);
+                    } else {
+                        this.prevBtn.classList.remove('visible');
+                        this.nextBtn.classList.remove('visible');
+                    }
+                }
+
+                const canGoPrev = currentIdx > 0;
+                const canGoNext = currentIdx < LOCATIONS.length - 1;
+
+                this.prevBtn.classList.toggle('disabled', !canGoPrev);
+                this.nextBtn.classList.toggle('disabled', !canGoNext);
+            }
+
+            startUpdateLoop() {
+                const loop = () => {
+                    this.updateNavigation();
+                    this.animationFrameId = requestAnimationFrame(loop);
+                };
+                loop();
+            }
+        }
+
+        let groundNav = null;
 
         function startAnim() {
             const loop = (t) => {
@@ -1006,16 +1240,7 @@
                 }
                 clearMarkers();
                 (loc.hotspots || []).forEach(h => {
-                    if (h.type === 'navigation') {
-                        const targetIdx = LOCATIONS.findIndex(l => l.id === h.targetId);
-                        if (targetIdx === -1) return;
-                        addMarkerMesh(h.yaw, h.pitch ?? -30, arrowTex, 1, {
-                            type: 'navigation',
-                            targetIdx,
-                            yaw: h.yaw,
-                            pitch: h.pitch ?? -30
-                        });
-                    } else if (h.type === 'info' || h.type === 'external_link') {
+                    if (h.type === 'info' || h.type === 'external_link') {
                         addMarkerMesh(h.yaw, h.pitch ?? -15, makeInfoTexture(h.label), 1.1, {
                             type: 'info',
                             label: h.label,
@@ -1025,24 +1250,11 @@
                         });
                     }
                 });
-
-                if (LOCATIONS.length > 1) {
-                    if (idx > 0) {
-                        addMarkerMesh(-70, -15, prevTex, 0.9, {
-                            type: 'prev',
-                            yaw: -70,
-                            pitch: -15
-                        });
-                    }
-                    if (idx < LOCATIONS.length - 1) {
-                        addMarkerMesh(70, -15, nextTex, 0.9, {
-                            type: 'next',
-                            yaw: 70,
-                            pitch: -15
-                        });
-                    }
-                }
             });
+
+            if (groundNav) {
+                groundNav.updateNavigation();
+            }
         }
 
         /* ── Controls ── */
@@ -1229,6 +1441,10 @@
 
         viewer.addEventListener('ready', () => {
             document.getElementById('loading').classList.add('hidden');
+
+            const canvas = document.querySelector('#viewer canvas');
+            groundNav = new GroundNavigation(viewer, canvas);
+
             initLeafletMap();
             loadLocation(0);
             startAnim();
