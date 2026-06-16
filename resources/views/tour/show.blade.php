@@ -1228,18 +1228,25 @@
                 updateMap(idx);
 
                 await viewer.setPanorama(toLoc.image);
+                
+                // Tentukan POV setelah panorama dimuat
+                let finalYaw = (toLoc.yaw || 0);
+                let finalPitch = (toLoc.pitch || 0);
+                
                 if (fromYaw !== undefined) {
-                    viewer.rotate({
-                        yaw: (fromYaw || 0) + 'deg',
-                        pitch: (fromPitch || 0) + 'deg'
-                    });
-                } else {
-                    viewer.rotate({
-                        yaw: (toLoc.yaw || 0) + 'deg',
-                        pitch: (toLoc.pitch || 0) + 'deg'
-                    });
+                    // Jika ada fromYaw yang diteruskan, gunakan itu
+                    finalYaw = (fromYaw || 0);
+                    finalPitch = (fromPitch || 0);
+                } else if (direction === 'prev') {
+                    // Jika mundur, tambahkan 180° ke yaw default
+                    finalYaw = (toLoc.yaw || 0) + 180;
                 }
-
+                
+                viewer.rotate({
+                    yaw: finalYaw + 'deg',
+                    pitch: finalPitch + 'deg'
+                });
+                
                 clearMarkers();
                 (toLoc.hotspots || []).forEach(h => {
                     if (h.type === 'info' || h.type === 'external_link') {
