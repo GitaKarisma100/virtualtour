@@ -187,10 +187,11 @@
     <nav class="fixed top-0 w-full z-50 glass border-b border-outline-variant/30 shadow-sm">
         <div class="flex justify-between items-center px-4 md:px-margin-desktop py-4 max-w-container-max mx-auto">
             <div class="flex items-center gap-2">
-                <div class="w-10 h-10 bg-primary flex items-center justify-center rounded-xl">
-                    <span class="material-symbols-outlined text-white"
-                        style="font-variation-settings: 'FILL' 1;">school</span>
-                </div>
+                <div class="w-10 h-10 flex items-center justify-center">
+    <img src="{{ asset('build/assets/images/logo.png') }}"
+         alt="Logo Poliwangi"
+         class="w-10 h-10 object-contain">
+</div>
                 <span class="font-headline-sm text-headline-sm font-extrabold text-primary">Politeknik Negeri
                     Banyuwangi</span>
             </div>
@@ -198,12 +199,12 @@
                 <a class="nav-link text-tech-blue font-bold border-b-2 border-tech-blue pb-1 font-body-md text-body-md transition-colors duration-300"
                     href="#hero" data-section="hero">Tour</a>
                 <a class="nav-link text-on-surface-variant font-body-md text-body-md hover:text-tech-blue transition-colors duration-300"
-                    href="#features" data-section="features">Facilities</a>
+                    href="#features" data-section="features">Fasilitas</a>
                 <a class="nav-link text-on-surface-variant font-body-md text-body-md hover:text-tech-blue transition-colors duration-300"
                     href="#gallery" data-section="gallery">Maps</a>
                 <a href="{{ $firstTourUrl ?? route('tour.index') }}"
                     class="bg-primary text-on-primary px-6 py-2.5 rounded-full font-button text-button active:scale-95 transition-transform hover:bg-deep-navy shadow-sm inline-block">
-                    Start Tour
+                    Mulai Tour
                 </a>
             </div>
             <button class="md:hidden text-primary">
@@ -221,24 +222,19 @@
         </div>
         <div class="relative z-10 px-4 md:px-margin-desktop max-w-container-max mx-auto w-full">
             <div class="max-w-2xl">
-                <span
-                    class="inline-block bg-secondary-container text-on-secondary-container px-4 py-1.5 rounded-full font-label-caps text-label-caps mb-6">
-                    CAMPUS VIRTUAL EXPERIENCE
-                </span>
+                
                 <h1
                     class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-white mb-6">
-                    Siap Menjelajahi Poliwangi?
+                    Siap Menjelajahi Poliwangi?
                 </h1>
                 <p class="font-body-lg text-body-lg text-white/90 mb-10 leading-relaxed">
-                    Nikmati pengalaman mendalam menjelajahi setiap sudut Politeknik Negeri Banyuwangi melalui teknologi
-                    360°. Temukan fasilitas kelas dunia dan lingkungan belajar inspiratif kami dari mana saja.
-                </p>
+                    Temukan informasi seputar Poliwangi melalui pengalaman Virtual Tour yang mudah</p>
                 <div class="flex flex-wrap gap-4">
                     <a href="{{ $firstTourUrl ?? route('tour.index') }}"
                         class="bg-vibrant-gold text-primary font-button text-button px-8 py-4 rounded-full inline-flex items-center gap-2 hover:bg-secondary-fixed transition-all active:scale-95 shadow-lg">
                         <span class="material-symbols-outlined"
                             style="font-variation-settings: 'FILL' 1;">explore</span>
-                        Mulai Tour 360°
+                        Mulai Virtual Tour 360°
                     </a>
                 </div>
             </div>
@@ -432,8 +428,7 @@
                         <span class="font-headline-sm text-headline-sm font-bold text-on-primary">Poliwangi</span>
                     </div>
                     <p class="text-on-primary/80 font-body-md text-sm mb-6">
-                        Jl. Raya Jember No.KM13, Kawang, Labanasem, Kec. Kabat, Kabupaten Banyuwangi, Jawa Timur 68461
-                    </p>
+                        Poliwangi adalah Politeknik Negeri Banyuwangi, sebuah perguruan tinggi vokasi negeri di Banyuwangi, Jawa Timur, yang berfokus pada pengembangan pendidikan berbasis keterampilan dan keahlian terapan. Sebagai lembaga pendidikan tinggi, Poliwangi menawarkan berbagai program studi yang dirancang untuk memenuhi kebutuhan industri dan dunia kerja, dengan pendekatan praktis dan kurikulum yang relevan.</p>
                     <div class="flex gap-4">
                         <a class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center text-white hover:bg-vibrant-gold hover:text-primary transition-colors"
                             href="#">
@@ -466,41 +461,14 @@
                 <!-- Information -->
                 <div>
                     <h5 class="text-white font-bold mb-6">Informasi</h5>
-                    <ul class="space-y-4">
-                        <li><a class="text-on-primary/80 hover:text-vibrant-gold transition-colors font-body-md text-sm"
-                                href="#">Campus Directory</a></li>
-                        <li><a class="text-on-primary/80 hover:text-vibrant-gold transition-colors font-body-md text-sm"
-                                href="#">Berita Kampus</a></li>
-                        <li><a class="text-on-primary/80 hover:text-vibrant-gold transition-colors font-body-md text-sm"
-                                href="#">Event</a></li>
-                        <li><a class="text-on-primary/80 hover:text-vibrant-gold transition-colors font-body-md text-sm"
-                                href="#">Karir</a></li>
-                    </ul>
+                    </div>
+                    <p class="text-on-primary/80 font-body-md text-sm mb-6">
+                        Jl. Raya Jember No.KM13, Kawang, Labanasem, Kec. Kabat, Kabupaten Banyuwangi, Jawa Timur 68461
+                    </p>
+                   
                 </div>
-                <!-- Legal -->
-                <div>
-                    <h5 class="text-white font-bold mb-6">Legalitas</h5>
-                    <ul class="space-y-4">
-                        <li><a class="text-on-primary/80 hover:text-vibrant-gold transition-colors font-body-md text-sm"
-                                href="#">Privacy Policy</a></li>
-                        <li><a class="text-on-primary/80 hover:text-vibrant-gold transition-colors font-body-md text-sm"
-                                href="#">Terms of Service</a></li>
-                        <li><a class="text-on-primary/80 hover:text-vibrant-gold transition-colors font-body-md text-sm"
-                                href="#">Statuta</a></li>
-                        <li><a class="text-on-primary/80 hover:text-vibrant-gold transition-colors font-body-md text-sm"
-                                href="#">Akreditasi</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4">
-                <p class="text-on-primary/60 text-xs">© 2024 Politeknik Negeri Banyuwangi. All rights reserved.</p>
-                <div class="flex gap-6">
-                    <a class="text-on-primary/60 hover:text-white text-xs" href="#">Sitemap</a>
-                    <a class="text-on-primary/60 hover:text-white text-xs" href="#">Cookies</a>
-                    <a class="text-on-primary/60 hover:text-white text-xs" href="#">Accessibility</a>
-                </div>
-            </div>
-        </div>
+               
+       
     </footer>
     <script>
         // Scroll spy – active nav link
