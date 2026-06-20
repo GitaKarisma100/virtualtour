@@ -217,24 +217,24 @@
         <div class="absolute inset-0 z-0">
             <img class="w-full h-full object-cover"
                 data-alt="A panoramic wide-angle view of a modern university campus with sleek architecture and green landscaping under a bright blue sky. The scene is illuminated with professional, high-key natural lighting that emphasizes the contemporary feel of the academic buildings. The aesthetic is clean and academic, utilizing a palette of deep navy blues and vibrant accents. The mood is inspiring and forward-thinking, capturing the essence of a leading technological institute."
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuD9LqDLa7AcAiYL1FdoHpUeLkjlTmf_wRSW_LXMLtZq_M69TX0v9Dd5yAadslNGPjmzbYtNszYDuDKKXDhq3swfljhlBq9nMNAfwQJFPw06CeqS4gyVXuI_xqToAIxF__R-ISr417vOY1KzmFgDfX3BdmJQ5xr_Q1wIYIWoEtdrF45PqhZmXLcn8H4Cjdgo7TREb5ZgjnlHgZwbN1JIbxPk_5adgNA1PTvlfAZZiAj9Tip0SBz5P7YR-Uh83-_eiuJrkdikRV6t0DI" />
-            <div class="absolute inset-0 bg-gradient-to-r from-primary/90 via-primary/40 to-transparent"></div>
+                src="{{ asset('build/assets/images/thumbnail.png') }}"
+                <div class="absolute inset-0 bg-gradient-to-r from-primary/90 via-primary/40 to-transparent"></div>
         </div>
         <div class="relative z-10 px-4 md:px-margin-desktop max-w-container-max mx-auto w-full">
-            <div class="max-w-2xl">
+    <div class="max-w-2xl ml-auto text-right">
                 
                 <h1
                     class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-white mb-6">
                     Siap Menjelajahi Poliwangi?
                 </h1>
                 <p class="font-body-lg text-body-lg text-white/90 mb-10 leading-relaxed">
-                    Temukan informasi seputar Poliwangi melalui pengalaman Virtual Tour yang mudah</p>
-                <div class="flex flex-wrap gap-4">
+                    Temukan hal yang ingin kamu tau di kampus Politeknik Negeri Banyuwangi</p>
+                <div class="flex flex-wrap gap-4 w-full justify-end">
                     <a href="{{ $firstTourUrl ?? route('tour.index') }}"
                         class="bg-vibrant-gold text-primary font-button text-button px-8 py-4 rounded-full inline-flex items-center gap-2 hover:bg-secondary-fixed transition-all active:scale-95 shadow-lg">
-                        <span class="material-symbols-outlined"
+                        <span class="material-symbols-outlined" text-right
                             style="font-variation-settings: 'FILL' 1;">explore</span>
-                        Mulai Virtual Tour 360°
+                        Mulai Virtual Tour
                     </a>
                 </div>
             </div>
