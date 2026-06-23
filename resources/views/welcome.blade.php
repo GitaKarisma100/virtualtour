@@ -224,33 +224,31 @@
     <div class="max-w-2xl ml-auto text-right">
                 
                 <h1
-                    class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-white mb-6">
+                    class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-[#0B2F61] mb-6">
                     Siap Menjelajahi Poliwangi?
                 </h1>
-                <p class="font-body-lg text-body-lg text-white/90 mb-10 leading-relaxed">
+                <p class="font-body-lg text-body-lg text-[#0B2F61] mb-10 leading-relaxed">
                     Temukan hal yang ingin kamu tau di kampus Politeknik Negeri Banyuwangi</p>
                 <div class="flex flex-wrap gap-4 w-full justify-end">
-                    <a href="{{ $firstTourUrl ?? route('tour.index') }}"
-                        class="bg-vibrant-gold text-primary font-button text-button px-8 py-4 rounded-full inline-flex items-center gap-2 hover:bg-secondary-fixed transition-all active:scale-95 shadow-lg">
-                        <span class="material-symbols-outlined" text-right
-                            style="font-variation-settings: 'FILL' 1;">explore</span>
-                        Mulai Virtual Tour
-                    </a>
-                </div>
+    <a href="{{ route('tour.index') }}" class="bg-vibrant-gold text-primary font-button text-button px-8 py-4 rounded-full inline-flex items-center gap-2 hover:bg-secondary-fixed transition-all active:scale-95 shadow-lg">
+        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">explore</span>
+        Mulai Virtual Tour
+    </a>
+</div>
             </div>
         </div>
         
     </section>
     <!-- Features Section -->
-    <section class="py-24 bg-surface-white" id="features">
+    <!-- <section class="py-24 bg-surface-white" id="features">
         <div class="px-4 md:px-margin-desktop max-w-container-max mx-auto">
             <div class="text-center mb-16">
                 <h2 class="font-headline-md text-headline-md text-primary mb-4">Fitur Utama Tur</h2>
                 <div class="w-20 h-1 bg-vibrant-gold mx-auto"></div>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter"> -->
                 <!-- Card 1 -->
-                <div
+                <!-- <div
                     class="bg-surface-container-low p-8 rounded-xl border border-outline-variant/30 hover:border-tech-blue transition-all group ambient-shadow">
                     <div
                         class="w-14 h-14 bg-tech-blue/10 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-tech-blue transition-colors">
@@ -260,8 +258,8 @@
                     <h3 class="font-headline-sm text-headline-sm text-primary mb-3">Virtual Tour 360°</h3>
                     <p class="text-on-surface-variant font-body-md text-body-md">Pandangan panorama lengkap yang
                         memungkinkan Anda berpindah antar ruangan dan gedung dengan lancar.</p>
-                </div>
-                <!-- Card 2 -->
+                </div> -->
+                <!-- Card 2
                 <div
                     class="bg-surface-container-low p-8 rounded-xl border border-outline-variant/30 hover:border-tech-blue transition-all group ambient-shadow">
                     <div
@@ -272,9 +270,9 @@
                     <h3 class="font-headline-sm text-headline-sm text-primary mb-3">Peta Interaktif</h3>
                     <p class="text-on-surface-variant font-body-md text-body-md">Navigasi mudah melalui peta digital
                         yang terintegrasi untuk menemukan lokasi fakultas dan unit penunjang.</p>
-                </div>
+                </div> -->
                 <!-- Card 3 -->
-                <div
+                <!-- <div
                     class="bg-surface-container-low p-8 rounded-xl border border-outline-variant/30 hover:border-tech-blue transition-all group ambient-shadow">
                     <div
                         class="w-14 h-14 bg-tech-blue/10 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-tech-blue transition-colors">
@@ -284,7 +282,7 @@
                     <h3 class="font-headline-sm text-headline-sm text-primary mb-3">Fasilitas Unggulan</h3>
                     <p class="text-on-surface-variant font-body-md text-body-md">Detail mendalam tentang Lab, Workshop,
                         dan Studio modern yang mendukung pembelajaran vokasi berkualitas.</p>
-                </div>
+                </div> -->
             </div>
         </div>
     </section>
@@ -419,54 +417,51 @@
         <div class="max-w-container-max mx-auto px-4 md:px-margin-desktop">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-gutter mb-16">
                 <!-- Brand/Contact -->
-                <div class="col-span-1 md:col-span-1">
-                    <div class="flex items-center gap-2 mb-6">
-                        <div class="w-8 h-8 bg-white flex items-center justify-center rounded-lg">
-                            <span class="material-symbols-outlined text-primary text-sm"
-                                style="font-variation-settings: 'FILL' 1;">school</span>
-                        </div>
-                        <span class="font-headline-sm text-headline-sm font-bold text-on-primary">Poliwangi</span>
-                    </div>
-                    <p class="text-on-primary/80 font-body-md text-sm mb-6">
-                        Poliwangi adalah Politeknik Negeri Banyuwangi, sebuah perguruan tinggi vokasi negeri di Banyuwangi, Jawa Timur, yang berfokus pada pengembangan pendidikan berbasis keterampilan dan keahlian terapan. Sebagai lembaga pendidikan tinggi, Poliwangi menawarkan berbagai program studi yang dirancang untuk memenuhi kebutuhan industri dan dunia kerja, dengan pendekatan praktis dan kurikulum yang relevan.</p>
-                    <div class="flex gap-4">
-                        <a class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center text-white hover:bg-vibrant-gold hover:text-primary transition-colors"
-                            href="#">
-                            <span class="material-symbols-outlined text-xl">language</span>
-                        </a>
-                        <a class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center text-white hover:bg-vibrant-gold hover:text-primary transition-colors"
-                            href="#">
-                            <span class="material-symbols-outlined text-xl">alternate_email</span>
-                        </a>
-                        <a class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center text-white hover:bg-vibrant-gold hover:text-primary transition-colors"
-                            href="#">
-                            <span class="material-symbols-outlined text-xl">call</span>
-                        </a>
-                    </div>
-                </div>
-                <!-- Academic -->
-                <div>
-                    <h5 class="text-white font-bold mb-6">Akademik</h5>
-                    <ul class="space-y-4">
-                        <li><a class="text-on-primary/80 hover:text-vibrant-gold transition-colors font-body-md text-sm"
-                                href="#">Admission</a></li>
-                        <li><a class="text-on-primary/80 hover:text-vibrant-gold transition-colors font-body-md text-sm"
-                                href="#">Fakultas Teknik</a></li>
-                        <li><a class="text-on-primary/80 hover:text-vibrant-gold transition-colors font-body-md text-sm"
-                                href="#">Fakultas Pariwisata</a></li>
-                        <li><a class="text-on-primary/80 hover:text-vibrant-gold transition-colors font-body-md text-sm"
-                                href="#">Fakultas Pertanian</a></li>
-                    </ul>
-                </div>
-                <!-- Information -->
-                <div>
-                    <h5 class="text-white font-bold mb-6">Informasi</h5>
-                    </div>
-                    <p class="text-on-primary/80 font-body-md text-sm mb-6">
-                        Jl. Raya Jember No.KM13, Kawang, Labanasem, Kec. Kabat, Kabupaten Banyuwangi, Jawa Timur 68461
-                    </p>
-                   
-                </div>
+      <div class="w-full grid grid-cols-1 md:grid-cols-12 gap-x-12 gap-y-8 items-start text-left">
+    
+    <div class="col-span-1 md:col-span-9">
+        <div class="flex items-center gap-3 mb-4">
+            <div class="p-2 bg-on-primary rounded-full flex items-center justify-center overflow-hidden shrink-0"> 
+                <img src="{{ asset('build/assets/images/logo.png') }}" alt="Logo Poliwangi" class="h-5 w-5 object-contain"> 
+            </div>
+            <span class="font-headline-sm text-lg font-bold text-on-primary tracking-wide">Poliwangi</span>
+        </div>
+        
+        <p class="text-on-primary/80 font-body-md text-sm mb-6 leading-relaxed text-justify max-w-2xl">
+            Poliwangi adalah Politeknik Negeri Banyuwangi, sebuah perguruan tinggi vokasi negeri di Banyuwangi, Jawa Timur, yang berfokus pada pengembangan pendidikan berbasis keterampilan dan keahlian terapan. Sebagai lembaga pendidikan tinggi, Poliwangi menawarkan berbagai program studi yang dirancang untuk memenuhi kebutuhan industri dan dunia kerja, dengan pendekatan praktis dan kurikulum yang relevan.
+        </p>
+        
+        <div class="flex gap-4">
+            <a class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center text-white hover:bg-vibrant-gold hover:text-primary transition-colors" href="#">
+                <span class="material-symbols-outlined text-xl">language</span>
+            </a>
+            <a class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center text-white hover:bg-vibrant-gold hover:text-primary transition-colors" href="#">
+                <span class="material-symbols-outlined text-xl">alternate_email</span>
+            </a>
+            <a class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center text-white hover:bg-vibrant-gold hover:text-primary transition-colors" href="#">
+                <span class="material-symbols-outlined text-xl">call</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="col-span-1 md:col-span-3">
+        <h5 class="text-white font-bold mb-4 text-base tracking-wider border-b border-white/10 pb-2">Akademik</h5>
+        <ul class="space-y-3">
+            <li><a class="text-on-primary/80 hover:text-vibrant-gold transition-colors font-body-md text-sm block" href="#">Admission</a></li>
+            <li><a class="text-on-primary/80 hover:text-vibrant-gold transition-colors font-body-md text-sm block" href="#">Fakultas Teknik</a></li>
+            <li><a class="text-on-primary/80 hover:text-vibrant-gold transition-colors font-body-md text-sm block" href="#">Fakultas Pariwisata</a></li>
+            <li><a class="text-on-primary/80 hover:text-vibrant-gold transition-colors font-body-md text-sm block" href="#">Fakultas Pertanian</a></li>
+        </ul>
+    </div>
+
+    <div class="col-span-1 md:col-span-3">
+        <h5 class="text-white font-bold mb-4 text-base tracking-wider border-b border-white/10 pb-2">Informasi</h5>
+        <p class="text-on-primary/80 font-body-md text-sm leading-relaxed text-left">
+            Jl. Raya Jember No.KM13, Kawang, Labanasem, Kec. Kabat, Kabupaten Banyuwangi, Jawa Timur 68461
+        </p>
+    </div>
+
+</div>
                
        
     </footer>

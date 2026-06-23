@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\BuildingController;
 use App\Http\Controllers\Admin\HotspotController;
 use App\Http\Controllers\Admin\LocationController;
+use App\Http\Controllers\Admin\BuildingPreviewController;
 use App\Http\Controllers\TourController;
 use App\Models\Building;
 use Illuminate\Support\Facades\Route;
