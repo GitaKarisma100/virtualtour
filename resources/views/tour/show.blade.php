@@ -139,7 +139,7 @@
         #back-btn {
             position: fixed;
             top: 24px;
-            right: 24px;
+            right: 150px;
             z-index: 999;
             background: rgba(0, 0, 0, 0.6);
             backdrop-filter: blur(12px);
@@ -488,6 +488,156 @@
             background: rgba(79, 195, 247, 0.25);
         }
 
+        /* ── Building Panel (Right) ── */
+        #building-panel {
+            position: fixed;
+            top: 0;
+            right: 0;
+            z-index: 1001;
+            width: 300px;
+            height: 100vh;
+            background: rgba(16, 16, 18, 0.92);
+            backdrop-filter: blur(20px);
+            border-left: 1px solid rgba(255, 255, 255, 0.08);
+            transform: translateX(100%);
+            transition: transform .35s cubic-bezier(.22, 1, .36, 1), opacity .3s;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        #building-panel.open {
+            transform: translateX(0);
+        }
+
+        #building-panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 20px 14px;
+            flex-shrink: 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        #building-panel-header h2 {
+            font-size: 11px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.35);
+            font-weight: 500;
+            margin: 0;
+        }
+
+        #building-panel-close {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 20px;
+            cursor: pointer;
+            padding: 2px 4px;
+            line-height: 1;
+        }
+
+        #building-panel-close:hover {
+            color: #fff;
+        }
+
+        #building-panel-body {
+            padding: 14px;
+            overflow-y: auto;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .building-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            cursor: pointer;
+            transition: all .2s;
+            text-decoration: none;
+            color: #fff;
+        }
+
+        .building-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.12);
+        }
+
+        .building-card.active {
+            background: rgba(79, 195, 247, 0.12);
+            border-color: rgba(79, 195, 247, 0.35);
+        }
+
+        .building-card-thumb {
+            width: 52px;
+            height: 52px;
+            border-radius: 8px;
+            object-fit: cover;
+            flex-shrink: 0;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .building-card-thumb-placeholder {
+            width: 52px;
+            height: 52px;
+            border-radius: 8px;
+            flex-shrink: 0;
+            background: rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .building-card-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .building-card-name {
+            font-size: 13px;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .building-card-meta {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.4);
+            margin-top: 2px;
+        }
+
+        #toggle-building-btn {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 12px;
+            padding: 10px 16px;
+            color: #fff;
+            font-size: 13px;
+            font-family: inherit;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: background .2s;
+        }
+
+        #toggle-building-btn:hover {
+            background: rgba(0, 0, 0, 0.8);
+        }
+
         /* Ground Navigation Wrapper */
         #ground-nav-container {
             position: fixed;
@@ -604,6 +754,46 @@
     </div>
 
     <a href="{{ route('tour.index') }}" id="back-btn">← Kembali</a>
+
+    <!-- Building Panel Toggle -->
+    <button id="toggle-building-btn" title="Daftar Gedung">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
+        GEDUNG
+    </button>
+
+    <!-- Building Panel -->
+    <div id="building-panel">
+        <div id="building-panel-header">
+            <h2>Gedung</h2>
+            <button id="building-panel-close">✕</button>
+        </div>
+        <div id="building-panel-body">
+            @foreach($buildings as $b)
+                <a href="{{ route('tour.show', $b) }}"
+                   class="building-card {{ $b->id === $building->id ? 'active' : '' }}">
+                    @if($b->thumbnail_path)
+                        <img src="{{ asset('storage/' . $b->thumbnail_path) }}"
+                             alt="{{ $b->name }}"
+                             class="building-card-thumb">
+                    @else
+                        <div class="building-card-thumb-placeholder">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="2">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+                                <polyline points="9 22 9 12 15 12 15 22"/>
+                            </svg>
+                        </div>
+                    @endif
+                    <div class="building-card-info">
+                        <div class="building-card-name">{{ $b->name }}</div>
+                        <div class="building-card-meta">{{ $b->locations_count }} lokasi</div>
+                    </div>
+                </a>
+            @endforeach
+        </div>
+    </div>
 
     <!-- Toggle Button -->
     <button id="toggle-panel-btn" title="Sembunyikan/tampilkan panel">
@@ -1492,6 +1682,17 @@
                 const hidden = panel.classList.toggle('hidden');
                 toggleBtn.classList.toggle('panel-hidden', hidden);
                 toggleBtn.querySelector('svg').style.transform = hidden ? 'rotate(180deg)' : '';
+            });
+
+            // Building Panel toggle
+            const buildingToggleBtn = document.getElementById('toggle-building-btn');
+            const buildingPanel = document.getElementById('building-panel');
+            const buildingPanelClose = document.getElementById('building-panel-close');
+            buildingToggleBtn.addEventListener('click', () => {
+                buildingPanel.classList.toggle('open');
+            });
+            buildingPanelClose.addEventListener('click', () => {
+                buildingPanel.classList.remove('open');
             });
         }
 
