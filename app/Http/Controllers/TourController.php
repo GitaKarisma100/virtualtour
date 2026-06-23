@@ -24,7 +24,12 @@ class TourController extends Controller
 
         $locationsJson = $this->generateLocationsJson($building);
 
-        return view('tour.show', compact('building', 'locationsJson'));
+        $buildings = Building::where('is_active', true)
+            ->withCount('locations')
+            ->orderBy('sort_order')
+            ->get();
+
+        return view('tour.show', compact('building', 'locationsJson', 'buildings'));
     }
 
     /**
@@ -39,7 +44,11 @@ class TourController extends Controller
 
         $locationsJson = $this->generateLocationsJson($building);
 
-        return view('tour.show', compact('building', 'locationsJson'));
+        $buildings = Building::withCount('locations')
+            ->orderBy('sort_order')
+            ->get();
+
+        return view('tour.show', compact('building', 'locationsJson', 'buildings'));
     }
 
     /**
@@ -57,8 +66,12 @@ class TourController extends Controller
 
         $locationsJson = $this->generateLocationsJson($building);
 
+        $buildings = Building::withCount('locations')
+            ->orderBy('sort_order')
+            ->get();
+
         // Mengirimkan data tambahan $location agar view tahu lokasi mana yang mau dibuka duluan
-        return view('tour.show', compact('building', 'locationsJson', 'location'));
+        return view('tour.show', compact('building', 'locationsJson', 'location', 'buildings'));
     }
 
     /**
