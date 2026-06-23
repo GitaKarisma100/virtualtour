@@ -43,7 +43,16 @@
                     <textarea name="description" rows="3"
                         class="w-full px-md py-sm bg-surface-container-low border border-outline-variant focus:border-primary focus:ring-0 rounded-lg text-body-md transition-all outline-none">{{ old('description', $hotspot->description ?? '') }}</textarea>
                 </div>
+ <div id="preview-section" class="{{ isset($location) && $location->image_path ? '' : 'hidden' }}">
 
+                    <label class="text-label-md font-label-md text-primary mb-base block">360° Preview — drag to position hotspot marker</label>
+
+                    <div id="preview-container" class="w-full rounded-lg overflow-hidden bg-surface-container-low border border-outline-variant" style="height: 360px;"></div>
+
+                    <p class="text-label-md text-secondary mt-xs">Drag to rotate &bull; Scroll to zoom &bull; Yaw/Pitch update automatically</p>
+
+                </div>
+                
                 <div class="grid grid-cols-2 gap-md">
                     <div>
                         <label class="text-label-md font-label-md text-primary mb-base block">Yaw (°) *</label>
@@ -61,11 +70,7 @@
 
                 <hr class="border-outline-variant">
 
-                <div id="preview-section" class="{{ isset($location) && $location->image_path ? '' : 'hidden' }}">
-                    <label class="text-label-md font-label-md text-primary mb-base block">360° Preview — drag to position hotspot marker</label>
-                    <div id="preview-container" class="w-full rounded-lg overflow-hidden bg-surface-container-low border border-outline-variant" style="height: 360px;"></div>
-                    <p class="text-label-md text-secondary mt-xs">Drag to rotate &bull; Scroll to zoom &bull; Yaw/Pitch update automatically</p>
-                </div>
+               
 
                 <hr class="border-outline-variant">
 
