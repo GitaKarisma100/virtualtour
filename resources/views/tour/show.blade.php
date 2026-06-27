@@ -971,6 +971,11 @@
         const SPHERE_R = 1;
         const PAN_STEP = THREE.MathUtils.degToRad(15);
 
+        function fovToZoomLevel(fov) {
+            if (!fov) fov = 100;
+            return ((120 - fov) / (120 - 30)) * 100;
+        }
+
         function makeCircleCanvas(bgColor) {
             const S = 512;
             const c = document.createElement('canvas');
@@ -1598,6 +1603,9 @@
                         pitch: (loc.pitch || 0) + 'deg'
                     });
                 }
+                if (loc.hfov) {
+                    viewer.zoom(fovToZoomLevel(loc.hfov));
+                }
                 clearMarkers();
                 (loc.hotspots || []).forEach(h => {
                     if (h.type === 'info' || h.type === 'external_link') {
@@ -1807,9 +1815,9 @@
             panorama: LOCATIONS[0].image,
             defaultYaw: '0deg',
             defaultPitch: '0deg',
-            defaultZoomLvl: 0,
+            defaultZoomLvl: fovToZoomLevel(LOCATIONS[0].hfov || 90),
             minFov: 30,
-            maxFov: 90,
+            maxFov: 120,
             navbar: false,
         });
 

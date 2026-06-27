@@ -28,7 +28,7 @@ class LocationController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'image' => 'required|image|max:10240',
-            'hfov' => 'nullable|numeric|min:1|max:360',
+            'hfov' => 'nullable|numeric|min:30|max:120',
             'yaw' => 'nullable|numeric|min:-180|max:180',
             'pitch' => 'nullable|numeric|min:-90|max:90',
             'map_x' => 'nullable|numeric|min:-90|max:90',
@@ -41,7 +41,7 @@ class LocationController extends Controller
         $location->building_id = $building->id;
         $location->name = $validated['name'];
         $location->description = $validated['description'] ?? null;
-        $location->hfov = $validated['hfov'] ?? 90;
+        $location->hfov = $validated['hfov'];
         $location->yaw = $validated['yaw'] ?? 0;
         $location->pitch = $validated['pitch'] ?? 0;
         $location->map_x = $validated['map_x'] ?? null;
@@ -69,7 +69,7 @@ class LocationController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'image' => 'nullable|image|max:10240',
-            'hfov' => 'nullable|numeric|min:1|max:360',
+            'hfov' => 'nullable|numeric|min:30|max:120',
             'yaw' => 'nullable|numeric|min:-180|max:180',
             'pitch' => 'nullable|numeric|min:-90|max:90',
             'map_x' => 'nullable|numeric|min:-90|max:90',
@@ -80,7 +80,7 @@ class LocationController extends Controller
 
         $location->name = $validated['name'];
         $location->description = $validated['description'] ?? null;
-        $location->hfov = $validated['hfov'] ?? 90;
+        $location->hfov = $validated['hfov'];
         $location->yaw = $validated['yaw'] ?? 0;
         $location->pitch = $validated['pitch'] ?? 0;
         $location->map_x = $validated['map_x'] ?? null;

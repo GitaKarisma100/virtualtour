@@ -71,7 +71,7 @@
                     </div>
                     <div>
                         <label class="text-label-md font-label-md text-primary mb-base block">HFOV (°)</label>
-                        <input type="number" name="hfov" value="{{ old('hfov', $location->hfov ?? 90) }}" step="any" min="1" max="360"
+                        <input type="number" name="hfov" value="{{ old('hfov', $location->hfov) }}" step="any" min="30" max="120"
                             class="w-full px-md py-sm bg-surface-container-low border border-outline-variant focus:border-primary focus:ring-0 rounded-lg text-body-md transition-all outline-none" />
                     </div>
                 </div>
@@ -145,8 +145,15 @@ let viewer = null;
 const container = document.getElementById('preview-container');
 const previewSection = document.getElementById('preview-section');
 
+const MIN_FOV = 30;
+const MAX_FOV = 120;
+
 function toDeg(rad) {
   return rad * 180 / Math.PI;
+}
+
+function fovToZoomLevel(fov) {
+  return ((MAX_FOV - fov) / (MAX_FOV - MIN_FOV)) * 100;
 }
 
 function initPreview(imageSrc) {
@@ -157,20 +164,21 @@ function initPreview(imageSrc) {
 
   const yaw = parseFloat(document.querySelector('[name="yaw"]').value) || 0;
   const pitch = parseFloat(document.querySelector('[name="pitch"]').value) || 0;
+  const hfov = parseFloat(document.querySelector('[name="hfov"]').value) || 90;
 
   viewer = new Viewer({
     container,
     panorama: imageSrc,
     defaultYaw: yaw + 'deg',
     defaultPitch: pitch + 'deg',
-    defaultZoomLvl: 0,
-    minFov: 30,
-    maxFov: 120,
+    defaultZoomLvl: fovToZoomLevel(hfov),
+    minFov: MIN_FOV,
+    maxFov: MAX_FOV,
     navbar: false,
     caption: '',
   });
 
-  viewer.addEventListener('position-change', (e) => {
+  viewer.addEventListener('position-updated', (e) => {
     document.querySelector('[name="yaw"]').value = toDeg(e.yaw).toFixed(1);
     document.querySelector('[name="pitch"]').value = toDeg(e.pitch).toFixed(1);
   });
@@ -187,6 +195,16 @@ function initPreview(imageSrc) {
     });
   }
 });
+
+const hfovInput = document.querySelector('[name="hfov"]');
+if (hfovInput) {
+  hfovInput.addEventListener('input', () => {
+    if (!viewer) return;
+    const hfov = parseFloat(hfovInput.value);
+    if (isNaN(hfov) || hfov === 0) return;
+    viewer.zoom(fovToZoomLevel(hfov));
+  });
+}
 
 @if(isset($location) && $location->image_path)
   initPreview('{{ asset("storage/".$location->image_path) }}');

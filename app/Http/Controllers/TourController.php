@@ -85,7 +85,7 @@ class TourController extends Controller
                 'name' => $location->name,
                 'description' => $location->description,
                 'image' => asset('storage/'.$location->image_path),
-                'hfov' => (int) ($location->hfov ?? 100),
+                'hfov' => $location->hfov !== null ? (float) $location->hfov : null,
                 'yaw' => (float) ($location->yaw ?? 0),
                 'pitch' => (float) ($location->pitch ?? 0),
                 'map_x' => $location->map_x !== null ? (float) $location->map_x : null,
