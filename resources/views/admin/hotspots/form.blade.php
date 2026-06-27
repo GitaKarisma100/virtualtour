@@ -232,7 +232,7 @@ function initPreview(imageSrc) {
     caption: '',
   });
 
-  viewer.addEventListener('position-change', (e) => {
+  viewer.addEventListener('position-updated', (e) => {
     document.querySelector('[name="yaw"]').value = toDeg(e.yaw).toFixed(1);
     document.querySelector('[name="pitch"]').value = toDeg(e.pitch).toFixed(1);
   });
