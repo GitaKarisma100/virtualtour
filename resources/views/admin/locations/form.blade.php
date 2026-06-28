@@ -61,12 +61,12 @@
                 <div class="grid grid-cols-3 gap-md">
                     <div>
                         <label class="text-label-md font-label-md text-primary mb-base block">Yaw (°)</label>
-                        <input type="number" name="yaw" value="{{ old('yaw', $location->yaw ?? 0) }}" step="any" min="-180" max="180"
+                        <input type="text" inputmode="decimal" name="yaw" value="{{ old('yaw', $location->yaw ?? 0) }}" pattern="-?\d+(\.\d+)?"
                             class="w-full px-md py-sm bg-surface-container-low border border-outline-variant focus:border-primary focus:ring-0 rounded-lg text-body-md transition-all outline-none" />
                     </div>
                     <div>
                         <label class="text-label-md font-label-md text-primary mb-base block">Pitch (°)</label>
-                        <input type="number" name="pitch" value="{{ old('pitch', $location->pitch ?? 0) }}" step="any" min="-90" max="90"
+                        <input type="text" inputmode="decimal" name="pitch" value="{{ old('pitch', $location->pitch ?? 0) }}" pattern="-?\d+(\.\d+)?"
                             class="w-full px-md py-sm bg-surface-container-low border border-outline-variant focus:border-primary focus:ring-0 rounded-lg text-body-md transition-all outline-none" />
                     </div>
                     <div>
@@ -144,6 +144,7 @@ import { Viewer } from '@photo-sphere-viewer/core';
 let viewer = null;
 const container = document.getElementById('preview-container');
 const previewSection = document.getElementById('preview-section');
+let rotateCount = 0;
 
 const MIN_FOV = 30;
 const MAX_FOV = 120;
@@ -179,6 +180,7 @@ function initPreview(imageSrc) {
   });
 
   viewer.addEventListener('position-updated', (e) => {
+    if (rotateCount > 0) return;
     document.querySelector('[name="yaw"]').value = toDeg(e.yaw).toFixed(1);
     document.querySelector('[name="pitch"]').value = toDeg(e.pitch).toFixed(1);
   });
@@ -188,10 +190,12 @@ function initPreview(imageSrc) {
   const input = document.querySelector(`[name="${name}"]`);
   if (input) {
     input.addEventListener('input', () => {
+      input.value = input.value.replace(/[^0-9.\-]/g, '');
       if (!viewer) return;
+      rotateCount++;
       const yaw = parseFloat(document.querySelector('[name="yaw"]').value) || 0;
       const pitch = parseFloat(document.querySelector('[name="pitch"]').value) || 0;
-      viewer.rotate({ yaw: yaw + 'deg', pitch: pitch + 'deg' });
+      viewer.rotate({ yaw: yaw + 'deg', pitch: pitch + 'deg' }).finally(() => rotateCount--);
     });
   }
 });
